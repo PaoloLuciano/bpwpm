@@ -4,10 +4,11 @@
 \alias{bpwpm_gibbs}
 \title{Bayesian Piecewise Polinomial Model}
 \usage{
-bpwpm_gibbs(Y, X, M, J, K, intercept = TRUE, precision = 1, draws = 10^3,
-  z_init = NULL, beta_init = NULL, mu_beta_0 = NULL,
-  sigma_beta_0_inv = NULL, w_init = NULL, mu_w_0 = NULL,
-  sigma_w_0_inv = NULL, verb = TRUE, debug = FALSE, keep = TRUE)
+bpwpm_gibbs(Y, X, M, J, K, intercept = TRUE, precision_beta = 1,
+  precision_w = 1, draws = 10^3, z_init = NULL, beta_init = NULL,
+  mu_beta_0 = NULL, sigma_beta_0_inv = NULL, w_init = NULL,
+  mu_w_0 = NULL, sigma_w_0_inv = NULL, verb = TRUE, debug = FALSE,
+  keep = TRUE)
 }
 \arguments{
 \item{Y}{Response vector of n binary observatios (integers 0,1 - vector of
@@ -24,9 +25,12 @@ size n)}
 \item{intercept}{Intercept:= To add an itercept term to the estimation. It's
 recomended to have one (logical)}
 
-\item{precision}{If using the default sigmas for betas and w, a diagonal
+\item{precision_beta}{If using the default sigmas for betas, a diagonal
 matrix will be used. Precision controls its magnitude (numeric - precision
 > 0)}
+
+\item{precision_w}{If using the default sigmas for w, a diagonal matrix will
+be used. Precision controls its magnitude (numeric - precision > 0)}
 
 \item{draws}{Númber of samples to draw from the Gibbs Sampler (integer - draw
 > 0)}
@@ -62,8 +66,9 @@ A list containing all the elements of the model
 }
 \description{
 Gibbs Sampler for simulating draws of parameters for the Bayesian Piece Wise
-Polinomial model described in the thesis.
+Polinomial model described on the thesis.
 }
 \examples{
-See test for more detailed examples
+See the main document of the thesis for a couple of full examples
+with its corresponding analysis.
 }

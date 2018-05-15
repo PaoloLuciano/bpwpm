@@ -1,3 +1,16 @@
+#' Piece wise polinomial expansion for X (PWP)
+#'
+#' Calculates and returns a list of matrixes, each one representing a PWP
+#' expansion for dimention d. Combines all of the parameters on a relatively
+#' fast computation of basis expansion for X described on the thesis and on
+#' (Denison, Mallik and Smith, 1998).
+#'
+#' @inheritParams bpwpm_gibbs
+#' @inheritParams calculate_F
+#' @param t matrix containing the nodes in which to split the Piecewise Polinomials
+#'
+#' @return A list of PWP expansion matrixes for each dimention d.
+#'
 calculate_Phi <- function(X, M, J, K, d, t){
 
     # Phi is a list containing the basis transformations matrices for each dimension j.
