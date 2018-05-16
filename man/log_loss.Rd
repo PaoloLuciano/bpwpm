@@ -8,7 +8,7 @@ log_loss(Y, p, eps = 1e-15, verb = TRUE)
 }
 \arguments{
 \item{Y}{Response vector of n binary observatios (integers 0,1 - vector of
-size n)}
+size n) Can be encoded as a factor a numeric vector.}
 
 \item{p}{Vector of fitted probabilities for each case}
 
@@ -17,7 +17,7 @@ size n)}
 \item{verb}{verbose, if True, prints aditional information (logical)}
 }
 \value{
-The value of the Log Loss function
+The value of the Log Loss function (numeric). The smaller, the better
 }
 \description{
 An implementation of the Log-Loss function for the binomial case

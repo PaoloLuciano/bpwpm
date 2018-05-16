@@ -8,9 +8,10 @@ calculate_F(Phi, w, d, intercept)
 }
 \arguments{
 \item{Phi}{Piecewise Polinomail expansion for an input matrix X previosly
-calculated by \code{\link{calculate_Phi.R}}}
+calculated by \code{\link{calculate_Phi}}}
 
-\item{w}{Set of weights for which to calculate F}
+\item{w}{Set of weights for which to calculate F. Numerical matrix of size
+(N*d)}
 
 \item{d}{Number of dimentions, this parameter helps to improve efficiency}
 

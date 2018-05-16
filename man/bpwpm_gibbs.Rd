@@ -7,12 +7,11 @@
 bpwpm_gibbs(Y, X, M, J, K, intercept = TRUE, precision_beta = 1,
   precision_w = 1, draws = 10^3, z_init = NULL, beta_init = NULL,
   mu_beta_0 = NULL, sigma_beta_0_inv = NULL, w_init = NULL,
-  mu_w_0 = NULL, sigma_w_0_inv = NULL, verb = TRUE, debug = FALSE,
-  keep = TRUE)
+  mu_w_0 = NULL, sigma_w_0_inv = NULL, verb = FALSE, debug = FALSE)
 }
 \arguments{
 \item{Y}{Response vector of n binary observatios (integers 0,1 - vector of
-size n)}
+size n) Can be encoded as a factor a numeric vector.}
 
 \item{X}{Design matrix of n observations and d covariables (numeric - n*d)}
 
@@ -58,11 +57,14 @@ N*N)}
 \item{verb}{verbose, if True, prints aditional information (logical)}
 
 \item{debug}{If TRUE, print even more info to help with debugging (logical)}
-
-\item{keep}{If TRUE, saves a copy of the transformations Phi (logical)}
 }
 \value{
-A list containing all the elements of the model
+An object of the class "bpwpm" containing at least the following
+components:
+* betas A data frame containing the Gibbs sampler simulation for beta
+* w A list of d elements. Each one is a data frame containign the simulation
+of the w_j parameters for each dimetnion j.
+* Phi The PWP Expansion for input matrix X and nodes selected on percentiles
 }
 \description{
 Gibbs Sampler for simulating draws of parameters for the Bayesian Piece Wise

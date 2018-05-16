@@ -5,12 +5,14 @@
 #' expansion Phi and a set of weights w.
 #'
 #' @param Phi Piecewise Polinomail expansion for an input matrix X previosly
-#'  calculated by \code{\link{calculate_Phi.R}}
-#' @param w Set of weights for which to calculate F
+#'  calculated by \code{\link{calculate_Phi}}
+#' @param w Set of weights for which to calculate F. Numerical matrix of size
+#' (N*d)
 #' @param d Number of dimentions, this parameter helps to improve efficiency
 #' @param intercept Intercept optional paramter. Logical
 #'
 #' @return F matrix
+#' @export
 #'
 calculate_F <- function(Phi, w, d, intercept){
 
