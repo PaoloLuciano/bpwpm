@@ -59,3 +59,37 @@ mode <- function(x) {
 calculate_projection <- function(F_mat, betas){
     return(crossprod(t(F_mat),betas))
 }
+
+#-------------------------------------------------------------------------------
+
+#' Calculates trained model for new Data
+#'
+#' Given a set of parameters inherited by the \code{\link{bpwpm_gibbs}} training
+#' procedure, we calculate the value of the projection function for new data.
+#' This function is both used on the predict and plot_3D functions.
+#' @param new_data A new set of data for which to calculate the f(x) projection
+#' function
+#' @param bpwpm_params A list of bpwpm parameters created by the function
+#' \code{\link{posterior_params}}
+#'
+#' @return A vector of the projection vector for a given set of points
+#' @export
+#'
+#' @examples (test_data, mean_params)
+model_projection <- function(new_data, bpwpm_params){
+
+    if(class(bpwpm_params) != "bpwpm_params"){
+        error("Invalid bpwpm parameters")
+        geterrmessage()
+    }
+
+    Phi <- calculate_Phi(X = new_data,
+                         M = bpwpm_params$M, J = bpwpm_params$J,
+                         K = bpwpm_params$K, d = bpwpm_params$d,
+                         t = bpwpm_params$tau)
+
+    F_mat <- calculate_F(Phi = Phi, bpwpm_params$w, d = bpwpm_params$d,
+                         intercept = bpwpm_params$intercept)
+
+    return(calculate_projection(F_mat = F_mat, betas = bpwpm_params$betas))
+}

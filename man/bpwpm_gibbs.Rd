@@ -61,10 +61,19 @@ N*N)}
 \value{
 An object of the class "bpwpm" containing at least the following
 components:
-* betas A data frame containing the Gibbs sampler simulation for beta
-* w A list of d elements. Each one is a data frame containign the simulation
-of the w_j parameters for each dimetnion j.
-* Phi The PWP Expansion for input matrix X and nodes selected on percentiles
+\itemize{
+\item{betas: }{A data frame containing the Gibbs sampler simulation for beta}
+\item{w: }{A list of d elements. Each one is a data frame containign the
+simulation of the w_j parameters for each dimetnion j.}
+\item{Phi: }{The PWP Expansion for input matrix X and nodes selected on
+percentiles}
+\item{tau: }{Nodes used for training}
+\item{M: }{Initial parameters}
+\item{J: }{Initial parameters}
+\item{K: }{Initial parameters}
+\item{d: }{Number of dimentions}
+\item{intercept: }{Logical value}
+}
 }
 \description{
 Gibbs Sampler for simulating draws of parameters for the Bayesian Piece Wise

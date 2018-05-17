@@ -91,7 +91,13 @@ posterior_params <- function(bpwpm_model, thin, burn_in, type = 'mean'){
     estimated_w <- data.frame(matrix(unlist(estimated_w), ncol = length(estimated_w)))
     colnames(estimated_w) <- paste("w_", seq(1,dim(estimated_w)[2]), sep = "")
 
-    params <- list(betas = estimated_betas, w = estimated_w)
+    params <- list(betas = estimated_betas, w = estimated_w,
+                   tau = bpwpm_model$tau,
+                   M = bpwpm_model$M,
+                   J = bpwpm_model$J,
+                   K = bpwpm_model$K,
+                   d = bpwpm_model$d,
+                   intercept = bpwpm_model$intercept)
     class(params) <- 'bpwpm_params'
 
     return(params)
@@ -167,8 +173,121 @@ plot_each_F <- function(Y,X,F_mat){
 
 #-------------------------------------------------------------------------------
 
-plot_2D_proj <- function(X){
-    ggplot()
+#' Scatter Plot of 2D data
+#'
+#' @inheritParams plot_each_F
+#' @param X Input Matrix of 2D (2 columns).
+#'
+#' @return A scatter plot of the 2 groups
+#' @export
+#'
+#' @examples (Y = rbinom(100, 1, 4), X = cbind(rnorm(100), rnorm(100)))
+plot_2D_data <- function(Y,X){
 
+    if(dim(X)[2] != 2){
+        error("Only a 2D plot can be made. X matrix has diferent dimensions")
+        geterrmessage()
+    }
+
+    if(class(Y) == "numeric"){
+        Y <- factor(Y)
+    }
+
+    if(class(X) == "matrix"){
+        X <- data.frame(X)
+    }
+
+    ggplot2::ggplot(data = X, aes(x = X[, 1], y = X[ ,2], col = Y)) +
+        geom_point() + xlab("X_1") + ylab("X_2")
+}
+
+#-------------------------------------------------------------------------------
+
+#' Plots the 3D representation of the projection function
+#'
+#' Given the set of parmeters and the input data in 2D, this function calculates
+#' and plots the data on a 3D linear space defined by the input matrix X.
+#' @inheritParams plot_2D_data
+#' @inheritParams model_projection
+#' @param n How thin is the grid to be made
+#' @param f_of_0 If the constant function 0 is to be ploted
+#'
+#' @return a 3d WireFrame Plot
+#' @export
+#'
+plot_3D_proj <- function(X, bpwpm_params, n, f_of_0 = TRUE){
+
+    mins <- apply(X, 2, min)
+    maxs <- apply(X, 2, max)
+
+    linspace <- expand.grid(X1 = seq(mins[1], maxs[1], by = 1/n),
+                            X2 = seq(mins[2], maxs[2], by = 1/n))
+
+    linspace$f <- model_projection(new_data = linspace,
+                                   bpwpm_params = bpwpm_params)
+
+    if(f_of_0){
+
+        m <- dim(linspace)[1]
+        linspace$g <- rep(1, times = m)
+
+        # Building the 0 gridspace
+        linspace <- rbind(linspace, data.frame(X1 = linspace[,1], X2 = linspace[,2]
+                                               ,f = rep(0, times = m),
+                                               g = rep(0, times = m)))
+    }
+
+    lattice::wireframe(f ~ X1 * X2, data = linspace, group = g,
+                       drape = TRUE,
+                       aspect = c(1,1),
+                       main = paste("3D plot for: M = ", bpwpm_params$M,
+                                    ", J = ", bpwpm_params$J, ", K = ", bpwpm_params$K),
+                       frame.plot = FALSE,
+                       colorkey = FALSE,
+                       scales = list(arrows = FALSE))
+                       # col.groups = rgb(c(255,0,0), c(0,255,0), alpha = 70,maxColorValue = 255),
+                       # col.regions = colorRampPalette(c("blue", "red"))(50))
+                       # at = 0, col.regions = c("red", "blue"))
+
+}
+
+#-------------------------------------------------------------------------------
+
+plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.5, size = 0.4){
+
+
+    if(dim(X)[2] != 2){
+        error("Only a 2D plot can be made. X matrix has diferent dimensions")
+        geterrmessage()
+    }
+
+    if(class(Y) == "numeric"){
+        Y <- factor(Y)
+    }
+
+    if(class(X) == "matrix"){
+        X <- data.frame(X)
+    }
+
+    mins <- apply(X, 2, min)
+    maxs <- apply(X, 2, max)
+
+    linspace <- expand.grid(X1 = seq(mins[1] - 0.2, maxs[1] + 0.2, by = 1/n),
+                            X2 = seq(mins[2] - 0.2, maxs[2] + 0.2, by = 1/n))
+
+    linspace$Y <- model_projection(new_data = linspace,
+                                   bpwpm_params = bpwpm_params)
+
+    linspace$Y<-  as.factor(as.integer(linspace$Y >= 0))
+    linspace$a <- rep(alpha, times = dim(linspace)[1])
+
+    data <- data.frame(cbind(X,Y), a = rep(1, times = dim(X)[1]))
+    colnames(data) <- c("X1","X2","Y","a")
+
+    data <- data.frame(rbind(data,linspace))
+
+    ggplot2::ggplot(data = data) +
+    geom_point(aes(x = X1, y = X2, col = Y, alpha = a), show.legend = FALSE) +
+        xlab("X_1") + ylab("X_2")
 
 }

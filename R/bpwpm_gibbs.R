@@ -36,10 +36,19 @@
 #'
 #' @return An object of the class "bpwpm" containing at least the following
 #' components:
-#' * betas A data frame containing the Gibbs sampler simulation for beta
-#' * w A list of d elements. Each one is a data frame containign the simulation
-#' of the w_j parameters for each dimetnion j.
-#' * Phi The PWP Expansion for input matrix X and nodes selected on percentiles
+#' \itemize{
+#' \item{betas: }{A data frame containing the Gibbs sampler simulation for beta}
+#' \item{w: }{A list of d elements. Each one is a data frame containign the
+#' simulation of the w_j parameters for each dimetnion j.}
+#' \item{Phi: }{The PWP Expansion for input matrix X and nodes selected on
+#' percentiles}
+#' \item{tau: }{Nodes used for training}
+#' \item{M: }{Initial parameters}
+#' \item{J: }{Initial parameters}
+#' \item{K: }{Initial parameters}
+#' \item{d: }{Number of dimentions}
+#' \item{intercept: }{Logical value}
+#' }
 #' @export
 #'
 #' @examples See the main document of the thesis for a couple of full examples
@@ -258,7 +267,9 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
     lapply(seq(1,length(sim_w)), function(x){colnames(sim_w[[x]]) <<-
         paste("w_",x,"_",seq(1,N), sep = "")})
 
-    model <- list(betas = data.frame(sim_beta), w = sim_w, Phi = Phi)
+    model <- list(betas = data.frame(sim_beta), w = sim_w, Phi = Phi, tau = t,
+                  M = M, J = J, K = K, d = d, intercept = intercept)
+
     class(model) <- 'bpwpm'
 
     return(model)
