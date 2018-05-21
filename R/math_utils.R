@@ -155,3 +155,5 @@ accurracy <- function(new_Y, p, verb = TRUE){
 
     return(1 - wrongs/n)
 }
+
+
