@@ -18,6 +18,8 @@
 #'   be used. Precision controls its magnitude (numeric - precision > 0)
 #' @param draws Númber of samples to draw from the Gibbs Sampler (integer - draw
 #'   > 0)
+#' @param t the initial position of nodes selected by the user. although·
+#' arbitraty they need to match the dimentions. (numeric - (J-1)*d)
 #' @param z_init z_init:= Initial values for Auxiliary variable z (numeric -
 #'   vector of size n)
 #' @param beta_init Initial value for the Gibbs Sampler Chain (numeric - vector
@@ -56,7 +58,7 @@
 
 bpwpm_gibbs <- function(Y, X, M, J, K,
                 intercept = TRUE, precision_beta = 1, precision_w = 1,
-                draws = 10^3,
+                draws = 10^3, t = NULL,
                 z_init = NULL, beta_init = NULL, mu_beta_0 = NULL,
                 sigma_beta_0_inv = NULL,
                 w_init = NULL, mu_w_0 = NULL, sigma_w_0_inv = NULL,
@@ -136,14 +138,15 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
     }
 
     # 0.3 Basic Info print
-    cat("\tBPWPM MODEL\n\t
-        Dimensions and pararamters check\n\t",
-        "Algorithm based on d = ", d, " covariables", "\n\t",
-        "Number of nodes J - 1 = ", J - 1, "\n\t",
-        "Order of polinomial M - 1 = ", M - 1, "\n\t",
-        "Order of continuity on derivatives K = ", K, "\n\t",
-        "Number of basis functions N = ", N, "\n\t",
-        "Number of observations n = ", n, "\n\n", sep = "")
+    info <- paste("\tBPWPM MODEL\n\t
+    Dimensions and pararamters check\n\t",
+    "Algorithm based on d = ", d, " covariables", "\n\t",
+    "Number of nodes J - 1 = ", J - 1, "\n\t",
+    "Order of polinomial M - 1 = ", M - 1, "\n\t",
+    "Order of continuity on derivatives K = ", K, "\n\t",
+    "Number of basis functions N = ", N, "\n\t",
+    "Number of observations n = ", n, "\n\n", sep = "")
+    cat(info)
 
     # 1. Initializing Gibbs Sampler---------------------------------------------
 
@@ -151,8 +154,13 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
     # 1.1 Node Initialization.
     # Setting Nodes on the quantiles of X. (numeric, (J-1)*d)
-    t <- sapply(data.frame(X), quantile, probs = seq(0,1, by = 1/J))
-    t <- matrix(t[-c(1,J+1), ], nrow = J - 1, ncol = d)
+    if(is.null(t)){
+        t <- sapply(data.frame(X), quantile, probs = seq(0,1, by = 1/J))
+        t <- matrix(t[-c(1,J+1), ], nrow = J - 1, ncol = d)
+    }else if(!(dim(t)[1] == (J-1) && dim(t)[2] == d)){
+        error("Dimentions of the given t does not match up. The standard tau matrix is recomended")
+        geterrmessage()
+    }
 
     if(verb){
         # Nodes
@@ -268,7 +276,7 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
         paste("w_",x,"_",seq(1,N), sep = "")})
 
     model <- list(betas = data.frame(sim_beta), w = sim_w, Phi = Phi, tau = t,
-                  M = M, J = J, K = K, d = d, intercept = intercept)
+                  M = M, J = J, K = K, d = d, intercept = intercept, info <- info)
 
     class(model) <- 'bpwpm'
 
