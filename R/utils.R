@@ -253,8 +253,22 @@ plot_3D_proj <- function(X, bpwpm_params, n, f_of_0 = TRUE){
 
 #-------------------------------------------------------------------------------
 
-plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.5, size = 0.4){
-
+#' Plot 2D projection of the Model
+#'
+#' Once a model has been run and evaluated, in case that we have a 2D input
+#' matrix, we can plot the projection to evaluate the model and its
+#' corresponding binary outcomes. Instead of plotting the corresponding conotur
+#' of the 3D function ploted by \link{\code{plot_3D_proj}} the output is
+#' converted to its corresponding output and mapped to the 2D input space.
+#'
+#' @inheritParams plot_2D_data
+#' @inheritParams plot_3D_proj
+#' @param alpha the corresponding alpha transparency param for the output space.
+#'
+#' @return A ggplot2 scatter plot
+#' @export
+#'
+plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.6){
 
     if(dim(X)[2] != 2){
         error("Only a 2D plot can be made. X matrix has diferent dimensions")
@@ -291,3 +305,7 @@ plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.5, size = 0.4){
         xlab("X_1") + ylab("X_2")
 
 }
+
+#-------------------------------------------------------------------------------
+
+

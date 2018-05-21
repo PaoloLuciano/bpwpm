@@ -17,14 +17,18 @@
 #' #' log_loss(true_values, fitted probabilities, 1e-30, FALSE)
 log_loss <- function(Y, p, eps = 1e-15, verb = TRUE){
 
+    if(class(Y) == "factor"){
+        Y <- as.integer(Y) -1
+    }
+
     p_corrected = pmin(pmax(p, eps), 1-eps)
-    ll <- - sum (y * log(p_corrected) + (1 - y) * log(1 - p_corrected))/length(y)
+    ll <- - sum (Y * log(p_corrected) + (1 - Y) * log(1 - p_corrected))/length(Y)
 
     if(verb){
         cat("\nLog_Loss: ",ll, sep ="")
     }
 
-    return(- sum (y * log(p_corrected) + (1 - y) * log(1 - p_corrected))/length(y))
+    return(- sum (Y * log(p_corrected) + (1 - Y) * log(1 - p_corrected))/length(Y))
 }
 
 #-------------------------------------------------------------------------------
@@ -92,4 +96,62 @@ model_projection <- function(new_data, bpwpm_params){
                          intercept = bpwpm_params$intercept)
 
     return(calculate_projection(F_mat = F_mat, betas = bpwpm_params$betas))
+}
+
+#-------------------------------------------------------------------------------
+
+#' Calculate Probabilities of Binary Outcome
+#'
+#' Given a model, we can calculate the corresponding the probabilites of the
+#' random response variable Y. Whereas this is new data or the one used to train
+#' the model. Since the model is a probit GLM at this point, we only need to
+#' calculate the projection and then plug them on the inverse of the normal
+#' gaussian acomulation function
+#'
+#' @inheritParams model_projection
+#'
+#' @return a vector of fitted probabilities for the response variable Y
+#' @export
+#'
+posterior_probs <- function(new_data, bpwpm_params){
+    if(class(bpwpm_params) != "bpwpm_params"){
+        error("Invalid bpwpm parameters")
+        geterrmessage()
+    }
+
+    z <- model_projection(new_data = new_data, bpwpm_params)
+
+    return(pnorm(z))
+}
+
+#-------------------------------------------------------------------------------
+
+#' Calculate Acurracy of the model
+#'
+#' Given a set of true values and their corresponding fitted probabilities,
+#' the function calculates the acurracy of the model defined by:
+#'  $1- ,#wrong prediction/# of observations$
+#'
+#' @inheritParams  log_loss
+#'
+#' @return The acurracy of the model, given the fitted probabilities and new data
+#' @export
+#'
+#' @examples (new_Y_ata, fitted_probs_for_data)
+accurracy <- function(new_Y, p, verb = TRUE){
+
+    if(class(new_Y) == "factor"){
+        new_Y <- as.integer(Y) - 1
+    }
+
+    n <- length(new_Y)
+
+    predicted_Y <- rep(0, times = n)
+    predicted_Y[p > 0.5] <- 1
+
+    wrongs <- sum(abs(new_Y - predicted_Y))
+
+    if(verb) cat(wrongs, " incorrect categorizations\n", sep = "")
+
+    return(1 - wrongs/n)
 }
