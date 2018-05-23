@@ -5,9 +5,10 @@
 \title{Bayesian Piecewise Polinomial Model}
 \usage{
 bpwpm_gibbs(Y, X, M, J, K, intercept = TRUE, precision_beta = 1,
-  precision_w = 1, draws = 10^3, z_init = NULL, beta_init = NULL,
-  mu_beta_0 = NULL, sigma_beta_0_inv = NULL, w_init = NULL,
-  mu_w_0 = NULL, sigma_w_0_inv = NULL, verb = FALSE, debug = FALSE)
+  precision_w = 1, draws = 10^3, t = NULL, z_init = NULL,
+  beta_init = NULL, mu_beta_0 = NULL, sigma_beta_0_inv = NULL,
+  w_init = NULL, mu_w_0 = NULL, sigma_w_0_inv = NULL, verb = FALSE,
+  debug = FALSE)
 }
 \arguments{
 \item{Y}{Response vector of n binary observatios (integers 0,1 - vector of
@@ -33,6 +34,9 @@ be used. Precision controls its magnitude (numeric - precision > 0)}
 
 \item{draws}{Númber of samples to draw from the Gibbs Sampler (integer - draw
 > 0)}
+
+\item{t}{the initial position of nodes selected by the user. although·
+arbitraty they need to match the dimentions. (numeric - (J-1)*d)}
 
 \item{z_init}{z_init:= Initial values for Auxiliary variable z (numeric -
 vector of size n)}

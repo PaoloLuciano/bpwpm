@@ -138,8 +138,8 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
     }
 
     # 0.3 Basic Info print
-    info <- paste("\tBPWPM MODEL\n\t
-    Dimensions and pararamters check\n\t",
+    info <- paste("\n\tBPWPM MODEL\n\t
+    \tDimensions and pararamters check\n\t",
     "Algorithm based on d = ", d, " covariables", "\n\t",
     "Number of nodes J - 1 = ", J - 1, "\n\t",
     "Order of polinomial M - 1 = ", M - 1, "\n\t",
@@ -276,7 +276,7 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
         paste("w_",x,"_",seq(1,N), sep = "")})
 
     model <- list(betas = data.frame(sim_beta), w = sim_w, Phi = Phi, tau = t,
-                  M = M, J = J, K = K, d = d, intercept = intercept, info <- info)
+                  M = M, J = J, K = K, d = d, intercept = intercept, info = info)
 
     class(model) <- 'bpwpm'
 

@@ -12,7 +12,9 @@ vector or as a numeric one.}
 
 \item{X}{A data frame or matrix containing the original Inputs for the model.}
 
-\item{F_mat}{The F matrix calculated via \code{\link{calculate.F}}}
+\item{F_mat}{The F matrix calculated via \code{\link{calculate_F}} or
+alternativly you can pass it the parameters calculated by function
+\code{\link{posterior_params}}}
 }
 \value{
 d plots for each dimention
