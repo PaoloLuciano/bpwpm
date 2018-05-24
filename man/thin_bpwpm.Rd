@@ -4,14 +4,14 @@
 \alias{thin_bpwpm}
 \title{Thinning of a BPWPM}
 \usage{
-thin_bpwpm(bpwpm_model, thin = 2, burn_in = 2000)
+thin_bpwpm(bpwpm, thin, burn_in)
 }
 \arguments{
-\item{bpwpm_model}{A bpwpm object created by \code{\link{bpwpm_gibbs}}}
-
 \item{thin}{A thinning parameter for the MCMC Chain}
 
 \item{burn_in}{A burn in parameter for the MCMC Chain}
+
+\item{bpwpm_model}{A bpwpm object created by \code{\link{bpwpm_gibbs}}}
 }
 \value{
 An object of the same kind of the bpwpm but thinned down

@@ -134,6 +134,24 @@ plot_each_F <- function(Y, X, F_mat){
 # Methods for ploting 2D Graphs
 #-------------------------------------------------------------------------------
 
+#' Wrapper Function for 2D Input Plots
+#'
+#' To better understand the model, we can visualize it, however due to universal
+#' limitations, plots are only availabe for X inputs of 2 dimentions. ie: only
+#' two factors included on the regresion.
+#'
+#' @param Y A response vector of size n
+#' @param X An input matrix of size n*2.
+#' @param bpwpm_params an object of the class
+#' @param n
+#' @param alpha
+#' @param f_of_0
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_2D <- function(Y, X, bpwpm_params, n, alpha = 0.6, f_of_0 = TRUE){
 
     # Sanitizing Inputs
     if(dim(X)[2] != 2){
@@ -152,6 +170,13 @@ plot_each_F <- function(Y, X, F_mat){
     if(length(Y) != dim(X)[1]){
         error("Y and X have a diferent number of observations")
         geterrmessage()
+    }
+
+    # To simplify stuff
+    if(class(bpwpm_params) == 'bpwpm_prediction'){
+        bpwpm_params <- bpwpm_params$bpwpm_params
+    }else if(class(bpwpm_params) != 'bpwpm_params'){
+        error("bpwpm_params or bpwpm_prediction objects requiered to print the plots")
     }
 
     # Normal Data

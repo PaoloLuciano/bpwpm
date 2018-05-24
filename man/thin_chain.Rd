@@ -4,7 +4,7 @@
 \alias{thin_chain}
 \title{Thin MCMC Chain}
 \usage{
-thin_chain(mcmc_chain, thin = 2, burn_in = 2000)
+thin_chain(mcmc_chain, thin, burn_in)
 }
 \arguments{
 \item{mcmc_chain}{An MCMC Chain matrix. (draws * number of params)}

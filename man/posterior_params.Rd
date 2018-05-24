@@ -4,11 +4,9 @@
 \alias{posterior_params}
 \title{Puntual estimation for parameters}
 \usage{
-posterior_params(bpwpm_model, thin, burn_in, type = "mean")
+posterior_params(bpwpm, thin, burn_in, type = "mean")
 }
 \arguments{
-\item{bpwpm_model}{A bpwpm object created by \code{\link{bpwpm_gibbs}}}
-
 \item{thin}{A thinning parameter for the MCMC Chain}
 
 \item{burn_in}{A burn in parameter for the MCMC Chain}
