@@ -11,9 +11,9 @@ predict.bpwpm <- function(object, new_Y, new_X,
 
     model_predict <- list(info = object$info,
                           type = type,
-                          params = post_params,
+                          bpwpm_params = post_params,
                           contingency_table = contingency_table(new_Y, p),
-                          accuracy = accurracy(new_Y, p),
+                          accuracy = accuracy(new_Y, p),
                           log_loss = log_loss(new_Y, p, verb = FALSE),
                           X = new_X,
                           Y = new_Y)

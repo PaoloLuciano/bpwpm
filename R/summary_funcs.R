@@ -69,7 +69,7 @@ summary.bpwpm_prediction <- function(object,
 
     cat(object$info)
     cat("Prediction Results:\n",
-        "\tAcurracy:\t", signif(object$accuracy*100, (digits - 1)), "%\n",
+        "\tAccuracy:\t", signif(object$accuracy*100, (digits - 1)), "%\n",
         "\tLog-Loss:\t", signif(object$log_loss, digits), "\n",
         "\tType of Posterior: ", object$type, "\n",
         "\tConfusion Matrix:", "\n")
@@ -77,16 +77,16 @@ summary.bpwpm_prediction <- function(object,
 
     cat("\nPosterior Estimated Params: \n")
 
-    print(object$params$betas)
+    print(object$bpwpm_params$betas)
     cat("\n")
-    print(object$params$w)
+    print(object$bpwpm_params$w)
 
     if(verb){
         cat("\nNodes\n")
-        print(object$params$tau)
+        print(object$bpwpm_params$tau)
 
         # cat("\nF_Transformation\n")
-        # print(object$params$estimated_F)
+        # print(object$bpwpm_params$estimated_F)
     }
 }
 

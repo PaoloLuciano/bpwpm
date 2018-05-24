@@ -18,7 +18,7 @@
 #'   be used. Precision controls its magnitude (numeric - precision > 0)
 #' @param draws Númber of samples to draw from the Gibbs Sampler (integer - draw
 #'   > 0)
-#' @param t the initial position of nodes selected by the user. although·
+#' @param tau the initial position of nodes selected by the user. although·
 #' arbitraty they need to match the dimentions. (numeric - (J-1)*d)
 #' @param z_init z_init:= Initial values for Auxiliary variable z (numeric -
 #'   vector of size n)
@@ -58,7 +58,7 @@
 
 bpwpm_gibbs <- function(Y, X, M, J, K,
                 intercept = TRUE, precision_beta = 1, precision_w = 1,
-                draws = 10^3, t = NULL,
+                draws = 10^3, tau = NULL,
                 z_init = NULL, beta_init = NULL, mu_beta_0 = NULL,
                 sigma_beta_0_inv = NULL,
                 w_init = NULL, mu_w_0 = NULL, sigma_w_0_inv = NULL,
@@ -154,18 +154,18 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
     # 1.1 Node Initialization.
     # Setting Nodes on the quantiles of X. (numeric, (J-1)*d)
-    if(is.null(t)){
-        t <- sapply(data.frame(X), quantile, probs = seq(0,1, by = 1/J))
-        t <- matrix(t[-c(1,J+1), ], nrow = J - 1, ncol = d)
-    }else if(!(dim(t)[1] == (J-1) && dim(t)[2] == d)){
-        error("Dimentions of the given t does not match up. The standard tau matrix is recomended")
+    if(is.null(tau)){
+        tau <- sapply(data.frame(X), quantile, probs = seq(0,1, by = 1/J))
+        tau <- matrix(tau[-c(1,J+1), ], nrow = J - 1, ncol = d)
+    }else if(!(dim(tau)[1] == (J-1) && dim(tau)[2] == d)){
+        error("Dimentions of the given tau does not match up. The standard tau matrix is recomended")
         geterrmessage()
     }
 
     if(verb){
         # Nodes
         cat("\tNodes Locations\n")
-        print(t, digits = 3)
+        print(tau, digits = 3)
         cat("\n")
 
         # Weights
@@ -175,10 +175,10 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
     }
 
     # 1.2 Piece Wise Polinomial expansion Phi
-    Phi <- calculate_Phi(X = X, M = M, J = J, K = K, d = d, t = t)
+    Phi <- calculate_Phi(X, M, J, K, d, tau)
 
     # 1.3 Calculating initial F
-    F_mat <- calculate_F(Phi = Phi, w = w, d = d, intercept = intercept)
+    F_mat <- calculate_F(Phi, w, d, intercept)
 
     if(verb){
         cat("\tInitial F\n")
@@ -275,9 +275,16 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
     lapply(seq(1,length(sim_w)), function(x){colnames(sim_w[[x]]) <<-
         paste("w_",x,"_",seq(1,N), sep = "")})
 
-    model <- list(betas = data.frame(sim_beta), w = sim_w, Phi = Phi, tau = t,
-                  M = M, J = J, K = K, d = d, intercept = intercept, info = info)
-
+    model <- list(betas = data.frame(sim_beta),
+                  w = sim_w,
+                  Phi = Phi,
+                  tau = tau,
+                  M = M,
+                  J = J,
+                  K = K,
+                  d = d,
+                  intercept = intercept,
+                  info = info)
     class(model) <- 'bpwpm'
 
     return(model)

@@ -9,11 +9,11 @@
 #'
 #' @inheritParams bpwpm_gibbs
 #' @inheritParams calculate_F
-#' @param t matrix containing the nodes in which to split the Piecewise Polinomials
+#' @param tau matrix containing the nodes in which to split the Piecewise Polinomials
 #'
 #' @return A list of PWP expansion matrixes for each dimention d.
 #'
-calculate_Phi <- function(X, M, J, K, d, t){
+calculate_Phi <- function(X, M, J, K, d, tau){
 
     # Phi is a list containing the basis transformations matrices for each dimension j.
     # For now, this basis expansion is done following the formula on the thesis, optimized as much as posible
@@ -31,17 +31,17 @@ calculate_Phi <- function(X, M, J, K, d, t){
             if(K != 0){
                 Phi_partial <- cbind(Phi_partial, sapply(X = seq(K, M-1),
                                                          FUN = function(x,y){y^x},
-                                                         y = pmax(0, X[ ,j] - t[k,j])))
+                                                         y = pmax(0, X[ ,j] - tau[k,j])))
             }
             else{
-                temp <- pmax(0, X[ ,j] - t[k,j])
+                temp <- pmax(0, X[ ,j] - tau[k,j])
                 temp[temp > 0] <- 1
                 Phi_partial <- cbind(Phi_partial, temp)
 
                 if(M > 1){
                     Phi_partial <- cbind(Phi_partial, sapply(X = seq(1,M-1),
                                                              FUN = function(x,y){y^x},
-                                                             y = pmax(0, X[ ,j] - t[k,j])))
+                                                             y = pmax(0, X[ ,j] - tau[k,j])))
                 }
             }
         }
@@ -180,7 +180,7 @@ model_projection <- function(new_data, bpwpm_params){
     Phi <- calculate_Phi(X = new_data,
                          M = bpwpm_params$M, J = bpwpm_params$J,
                          K = bpwpm_params$K, d = bpwpm_params$d,
-                         t = bpwpm_params$tau)
+                         tau = bpwpm_params$tau)
 
     F_mat <- calculate_F(Phi = Phi, bpwpm_params$w, d = bpwpm_params$d,
                          intercept = bpwpm_params$intercept)
@@ -216,19 +216,19 @@ posterior_probs <- function(new_data, bpwpm_params){
 
 #-------------------------------------------------------------------------------
 
-#' Calculate Acurracy of the model
+#' Calculate the Accuracy of the model
 #'
 #' Given a set of true values and their corresponding fitted probabilities,
-#' the function calculates the acurracy of the model defined by:
+#' the function calculates the accuracy of the model defined by:
 #'  $1- ,#wrong prediction/# of observations$
 #'
 #' @inheritParams  log_loss
 #'
-#' @return The acurracy of the model, given the fitted probabilities and new data
+#' @return The accuracy of the model, given the fitted probabilities and new data
 #' @export
 #'
 #' @examples (new_Y_ata, fitted_probs_for_data)
-accurracy <- function(new_Y, p, verb = FALSE){
+accuracy <- function(new_Y, p, verb = FALSE){
 
     if(class(new_Y) == "factor"){
         new_Y <- as.integer(Y) - 1

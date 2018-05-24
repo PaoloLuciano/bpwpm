@@ -80,7 +80,7 @@ plot.bpwpm_prediction <- function(object, ...){
         geterrmessage()
     }
 
-    plot_each_F(object$Y, object$X, object$params)
+    plot_each_F(object$Y, object$X, object$bpwpm_params)
 }
 
 #-------------------------------------------------------------------------------
@@ -134,6 +134,40 @@ plot_each_F <- function(Y, X, F_mat){
 # Methods for ploting 2D Graphs
 #-------------------------------------------------------------------------------
 
+
+    # Sanitizing Inputs
+    if(dim(X)[2] != 2){
+        error("Only a 2D plot can be made. X matrix has diferent dimensions")
+        geterrmessage()
+    }
+
+    if(class(Y) == "numeric"){
+        Y <- factor(Y)
+    }
+
+    if(class(X) == "matrix"){
+        X <- data.frame(X)
+    }
+
+    if(length(Y) != dim(X)[1]){
+        error("Y and X have a diferent number of observations")
+        geterrmessage()
+    }
+
+    # Normal Data
+    p <- plot_2D_data(Y,X)
+    print(p)
+    readline(prompt = "Press [enter] to view next plot")
+    p <- plot_2D_proj(Y, X, bpwpm_params, n, alpha)
+    print(p)
+    readline(prompt = "Press [enter] to view next plot")
+    p <- plot_3D_proj(X, bpwpm_params, n, f_of_0)
+    print(p)
+
+}
+
+#-------------------------------------------------------------------------------
+
 #' Scatter Plot of 2D data
 #'
 #' @inheritParams plot_each_F
@@ -160,6 +194,60 @@ plot_2D_data <- function(Y,X){
 
     ggplot2::ggplot(data = X, aes(x = X[, 1], y = X[ ,2], col = Y)) +
         geom_point() + xlab("X_1") + ylab("X_2")
+}
+
+#-------------------------------------------------------------------------------
+
+#' Plot 2D projection of the Model
+#'
+#' Once a model has been run and evaluated, in case that we have a 2D input
+#' matrix, we can plot the projection to evaluate the model and its
+#' corresponding binary outcomes. Instead of plotting the corresponding conotur
+#' of the 3D function ploted by \code{\link{plot_3D_proj}} the output is
+#' converted to its corresponding output and mapped to the 2D input space.
+#'
+#' @inheritParams plot_3D_proj
+#' @param alpha the corresponding alpha transparency param for the output space.
+#'
+#' @return A ggplot2 scatter plot
+#' @export
+#'
+plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.6){
+
+    if(dim(X)[2] != 2){
+        error("Only a 2D plot can be made. X matrix has diferent dimensions")
+        geterrmessage()
+    }
+
+    if(class(Y) == "numeric"){
+        Y <- factor(Y)
+    }
+
+    if(class(X) == "matrix"){
+        X <- data.frame(X)
+    }
+
+    mins <- apply(X, 2, min)
+    maxs <- apply(X, 2, max)
+
+    linspace <- expand.grid(X1 = seq(mins[1] - 0.2, maxs[1] + 0.2, by = 1/n),
+                            X2 = seq(mins[2] - 0.2, maxs[2] + 0.2, by = 1/n))
+
+    linspace$Y <- model_projection(new_data = linspace,
+                                   bpwpm_params = bpwpm_params)
+
+    linspace$Y<-  as.factor(as.integer(linspace$Y >= 0))
+    linspace$a <- rep(alpha, times = dim(linspace)[1])
+
+    data <- data.frame(cbind(X,Y), a = rep(1, times = dim(X)[1]))
+    colnames(data) <- c("X1","X2","Y","a")
+
+    data <- data.frame(rbind(data,linspace))
+
+    ggplot2::ggplot(data = data) +
+        geom_point(aes(x = X1, y = X2, col = Y, alpha = a), show.legend = FALSE) +
+        xlab("X_1") + ylab("X_2")
+
 }
 
 #-------------------------------------------------------------------------------
@@ -214,59 +302,5 @@ plot_3D_proj <- function(X, bpwpm_params, n, f_of_0 = TRUE){
     # col.groups = rgb(c(255,0,0), c(0,255,0), alpha = 70,maxColorValue = 255),
     # col.regions = colorRampPalette(c("blue", "red"))(50))
     # at = 0, col.regions = c("red", "blue"))
-
-}
-
-#-------------------------------------------------------------------------------
-
-#' Plot 2D projection of the Model
-#'
-#' Once a model has been run and evaluated, in case that we have a 2D input
-#' matrix, we can plot the projection to evaluate the model and its
-#' corresponding binary outcomes. Instead of plotting the corresponding conotur
-#' of the 3D function ploted by \code{\link{plot_3D_proj}} the output is
-#' converted to its corresponding output and mapped to the 2D input space.
-#'
-#' @inheritParams plot_3D_proj
-#' @param alpha the corresponding alpha transparency param for the output space.
-#'
-#' @return A ggplot2 scatter plot
-#' @export
-#'
-plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.6){
-
-    if(dim(X)[2] != 2){
-        error("Only a 2D plot can be made. X matrix has diferent dimensions")
-        geterrmessage()
-    }
-
-    if(class(Y) == "numeric"){
-        Y <- factor(Y)
-    }
-
-    if(class(X) == "matrix"){
-        X <- data.frame(X)
-    }
-
-    mins <- apply(X, 2, min)
-    maxs <- apply(X, 2, max)
-
-    linspace <- expand.grid(X1 = seq(mins[1] - 0.2, maxs[1] + 0.2, by = 1/n),
-                            X2 = seq(mins[2] - 0.2, maxs[2] + 0.2, by = 1/n))
-
-    linspace$Y <- model_projection(new_data = linspace,
-                                   bpwpm_params = bpwpm_params)
-
-    linspace$Y<-  as.factor(as.integer(linspace$Y >= 0))
-    linspace$a <- rep(alpha, times = dim(linspace)[1])
-
-    data <- data.frame(cbind(X,Y), a = rep(1, times = dim(X)[1]))
-    colnames(data) <- c("X1","X2","Y","a")
-
-    data <- data.frame(rbind(data,linspace))
-
-    ggplot2::ggplot(data = data) +
-        geom_point(aes(x = X1, y = X2, col = Y, alpha = a), show.legend = FALSE) +
-        xlab("X_1") + ylab("X_2")
 
 }

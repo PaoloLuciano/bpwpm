@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples (beta, 2, 2000)
-thin_chain <- function(mcmc_chain, thin = 2, burn_in = 2000){
+thin_chain <- function(mcmc_chain, thin, burn_in){
 
     draws <- dim(mcmc_chain)[1]
 
@@ -36,16 +36,16 @@ thin_chain <- function(mcmc_chain, thin = 2, burn_in = 2000){
 #' @return An object of the same kind of the bpwpm but thinned down
 #' @export
 #'
-thin_bpwpm <- function(bpwpm_model, thin = 2, burn_in = 2000){
+thin_bpwpm <- function(bpwpm, thin, burn_in){
 
-    if(class(bpwpm_model) != 'bpwpm'){
+    if(class(bpwpm) != 'bpwpm'){
         error("Object not of class bpwpm")
         geterrmessage()
     }
 
-    bpwpm_model_copy <- bpwpm_model
-    bpwpm_model_copy$betas <- thin_chain(bpwpm_model$betas, thin = thin, burn_in = burn_in)
-    bpwpm_model_copy$w <- lapply(bpwpm_model$w, thin_chain, thin = thin, burn_in = burn_in)
+    bpwpm_model_copy <- bpwpm
+    bpwpm_model_copy$betas <- thin_chain(bpwpm$betas, thin = thin, burn_in = burn_in)
+    bpwpm_model_copy$w <- lapply(bpwpm$w, thin_chain, thin = thin, burn_in = burn_in)
 
     return(bpwpm_model_copy)
 }
@@ -66,9 +66,9 @@ thin_bpwpm <- function(bpwpm_model, thin = 2, burn_in = 2000){
 #' @export
 #'
 #' @examples (model, 2, 2000, 'mean') (model, 0, 0, 'median')
-posterior_params <- function(bpwpm_model, thin, burn_in, type = 'mean'){
+posterior_params <- function(bpwpm, thin, burn_in, type = 'mean'){
 
-    if(class(bpwpm_model) != 'bpwpm'){
+    if(class(bpwpm) != 'bpwpm'){
         error("Object not of class bpwpm")
         geterrmessage()
     }
@@ -80,7 +80,7 @@ posterior_params <- function(bpwpm_model, thin, burn_in, type = 'mean'){
         geterrmessage()}
 
     # Fist the model is thinned down
-    thined_model <- thin_bpwpm(bpwpm_model, thin = thin, burn_in = burn_in)
+    thined_model <- thin_bpwpm(bpwpm, thin = thin, burn_in = burn_in)
 
     # Estimation for beta
     estimated_betas <- sapply(thined_model$betas, func)
@@ -91,18 +91,18 @@ posterior_params <- function(bpwpm_model, thin, burn_in, type = 'mean'){
     estimated_w <- data.frame(matrix(unlist(estimated_w), ncol = length(estimated_w)))
     colnames(estimated_w) <- paste("w_", seq(1,dim(estimated_w)[2]), sep = "")
 
-    estimated_F <- calculate_F(bpwpm_model$Phi,estimated_w, d = bpwpm_model$d,
-                               intercept = bpwpm_model$intercept)
+    estimated_F <- calculate_F(bpwpm$Phi,estimated_w, d = bpwpm$d,
+                               intercept = bpwpm$intercept)
 
-    params <- list(betas = estimated_betas, w = estimated_w,
-                   tau = bpwpm_model$tau,
+    params <- list(betas = estimated_betas,
+                   w = estimated_w,
+                   tau = bpwpm$tau,
                    estimated_F = estimated_F,
-                   M = bpwpm_model$M,
-                   J = bpwpm_model$J,
-                   K = bpwpm_model$K,
-                   d = bpwpm_model$d,
-                   intercept = bpwpm_model$intercept
-                   )
+                   M = bpwpm$M,
+                   J = bpwpm$J,
+                   K = bpwpm$K,
+                   d = bpwpm$d,
+                   intercept = bpwpm$intercept)
     class(params) <- 'bpwpm_params'
 
     return(params)
