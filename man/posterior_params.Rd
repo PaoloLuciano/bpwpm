@@ -2,11 +2,13 @@
 % Please edit documentation in R/utils.R
 \name{posterior_params}
 \alias{posterior_params}
-\title{Puntual estimation for parameters}
+\title{Puntual Posterior Estimation of bpwpm Parameters}
 \usage{
 posterior_params(bpwpm, thin, burn_in, type = "mean")
 }
 \arguments{
+\item{bpwpm}{an object of the class bpwpm}
+
 \item{thin}{A thinning parameter for the MCMC Chain}
 
 \item{burn_in}{A burn in parameter for the MCMC Chain}
@@ -15,12 +17,24 @@ posterior_params(bpwpm, thin, burn_in, type = "mean")
 include: mean, mode or median.}
 }
 \value{
-A parameter list that contains the estimations of beta and w.
+An object of the class bpwpm_params that contains:
+\describe{
+  \item{\eqn{\beta}}{The posterior estimation for \eqn{\beta}}
+  \item{\eqn{w}}{The posterior estimation for w's on each dimention}
+  \item{\eqn{\tau}}{The corresponding nodes}
+  \item{F}{The final F matrix}
+  \item{M}{M parameter}
+  \item{J}{J parameter}
+  \item{K}{K parameter}
+  \item{d}{number of dimentions}
+  \item{intercept}{Logical}
+}
 }
 \description{
-Given a model output by the function bpwpm_gibbs, it thins down the chain and
-makes puntual estimation for the parameters. This parameter structure can
-later be used to calculate the F matrix and other results.
+Given a model output by the function \code{\link{bpwpm_gibbs}}, it thins
+down the chain and makes puntual estimation for the parameters, given a type
+of estimation. This parameter object can later be used to calculate the
+F matrix and other results.
 }
 \examples{
 (model, 2, 2000, 'mean') (model, 0, 0, 'median')

@@ -4,17 +4,17 @@
 \alias{plot_chains}
 \title{Plot MCMC Chains}
 \usage{
-plot_chains(mcmc_chain, number = 100, title = "")
+plot_chains(mcmc_chain, n = 100, title = "")
 }
 \arguments{
 \item{mcmc_chain}{An MCMC Chain matrix. (draws * number of params)}
 
-\item{number}{The number of draws to plot.}
+\item{n}{number of draws to plot}
 
 \item{title}{Title for the plot}
 }
 \value{
-A ggplot2 plot
+A ggplot2 lines plot
 }
 \description{
 Plots the last n draws of an MCMC chain

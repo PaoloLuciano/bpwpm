@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_funcs.R
 \name{plot_each_F}
 \alias{plot_each_F}
-\title{Plots each F(X)}
+\title{Plots each dimention f(x)}
 \usage{
 plot_each_F(Y, X, F_mat)
 }
@@ -17,10 +17,10 @@ alternativly you can pass it the parameters calculated by function
 \code{\link{posterior_params}}}
 }
 \value{
-d plots for each dimention
+d plots for each dimention created using ggplot2
 }
 \description{
-With the \code{w} parameters calculated from the Ginns run, and
+With the posterior \code{w} parameters calculated from the Gibbs run, and
 \code{\link{posterior_params}}, a Final F matrix can be calculated. and
 hence, ploted against every Input X to see how does the PWP expansion looks
 like for the specified set of parameters.

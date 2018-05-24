@@ -7,22 +7,26 @@
 plot_2D_proj(Y, X, bpwpm_params, n, alpha = 0.6)
 }
 \arguments{
-\item{X}{Input Matrix of 2D (2 columns).}
+\item{Y}{A response vector of size n}
 
-\item{bpwpm_params}{A list of bpwpm parameters created by the function
-\code{\link{posterior_params}}}
+\item{X}{An input matrix of size n*2.}
 
-\item{n}{How thin is the grid to be made}
+\item{bpwpm_params}{an object of the class bpwpm_params of bpwpm_prediction
+created by the functions \code{\link{posterior_params}} or
+\code{\link{predict.bpwpm}} respectively that contains all the info about the
+posterior parametres of the model.}
 
-\item{alpha}{the corresponding alpha transparency param for the output space.}
+\item{n}{Thinness of grid for 2D and 3D projectction}
+
+\item{alpha}{numeric - level of transparency for 2D projection}
 }
 \value{
 A ggplot2 scatter plot
 }
 \description{
-Once a model has been run and evaluated, in case that we have a 2D input
-matrix, we can plot the projection to evaluate the model and its
-corresponding binary outcomes. Instead of plotting the corresponding conotur
-of the 3D function ploted by \code{\link{plot_3D_proj}} the output is
-converted to its corresponding output and mapped to the 2D input space.
+2D projection of both the inputs and the posterior regions of classification.
+Usefull to evaluate the corresponding binary outcomes.
+Instead of plotting the corresponding conotur of the 3D function plotted by
+\code{\link{plot_3D_proj}}. The projection function is mapped to it's
+corresponding binary output and plotted behind the regular data.
 }

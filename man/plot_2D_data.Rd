@@ -7,16 +7,15 @@
 plot_2D_data(Y, X)
 }
 \arguments{
-\item{Y}{A vector of binary response. Can be encoded as either a factor
-vector or as a numeric one.}
+\item{Y}{A response vector of size n}
 
-\item{X}{Input Matrix of 2D (2 columns).}
+\item{X}{An input matrix of size n*2.}
 }
 \value{
-A scatter plot of the 2 groups
+A ggplot2 scatter plot
 }
 \description{
-Scatter Plot of 2D data
+Scatter plot to visualize the data and it's corresponding groups.
 }
 \examples{
 (Y = rbinom(100, 1, 4), X = cbind(rnorm(100), rnorm(100)))

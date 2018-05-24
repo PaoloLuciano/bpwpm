@@ -1,3 +1,18 @@
+# Generic S3 summary functions for the package bpwpm
+#-------------------------------------------------------------------------------
+
+#' Summarizes an bpwpm run
+#'
+#' Once the model has been run, soem relevant statistics are given for each one
+#' of the parameters to evaluate its convergence and relevance.
+#'
+#' @param object of the class bpwpm
+#' @param digits number of significant digits for the figures
+#' @param ... additional parameters
+#'
+#' @return Prints out summarized information
+#' @export
+#'
 summary.bpwpm <- function(object,
                           digits = max(3L, getOption("digits") - 3L), ...) {
 
@@ -32,6 +47,16 @@ summary.bpwpm <- function(object,
 
 #-------------------------------------------------------------------------------
 
+#' Summarizes the parameters of an bpwpm
+#'
+#' @param object An object of the class bpwpm_params
+#' @param digits Number of significant digits for the figures
+#' @param verb To print out additional info
+#' @param ... Arguments to be passed to or from other methods
+#'
+#' @return Prints out info
+#' @export
+#'
 summary.bpwpm_params <- function(object,
                                  digits = max(3L, getOption("digits") - 3L),
                                  verb = FALSE, ...){
@@ -58,6 +83,16 @@ summary.bpwpm_params <- function(object,
 
 #-------------------------------------------------------------------------------
 
+#' Summarizes an bpwpm prediciton
+#'
+#' @param object An object of the class bpwpm_prediction
+#' @param digits Number of significant digits for the figures
+#' @param verb To print out additional info
+#' @param ... Arguments to be passed to or from other methods
+#'
+#' @return Prints out info
+#' @export
+#'
 summary.bpwpm_prediction <- function(object,
                                     digits = max(3L, getOption("digits") - 3L),
                                     verb = FALSE, ...){

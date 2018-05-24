@@ -1,68 +1,30 @@
 # Series of utility functions to evaluate the MCMC chain for the bpwpm model
-
 #-------------------------------------------------------------------------------
-
-#' Thin MCMC Chain
+#' Puntual Posterior Estimation of bpwpm Parameters
 #'
-#' Thins and eliminates the burn in period of the Gibbs Chain.
+#' Given a model output by the function \code{\link{bpwpm_gibbs}}, it thins
+#' down the chain and makes puntual estimation for the parameters, given a type
+#' of estimation. This parameter object can later be used to calculate the
+#' F matrix and other results.
 #'
-#' @param mcmc_chain An MCMC Chain matrix. (draws * number of params)
+#' @param bpwpm an object of the class bpwpm
 #' @param thin A thinning parameter for the MCMC Chain
 #' @param burn_in A burn in parameter for the MCMC Chain
-#'
-#' @return The thinned down version of the MCMC chain
-#' @export
-#'
-#' @examples (beta, 2, 2000)
-thin_chain <- function(mcmc_chain, thin, burn_in){
-
-    draws <- dim(mcmc_chain)[1]
-
-    if(burn_in > draws){stop("Burn In parameter too large")
-        geterrmessage()}
-
-    return(mcmc_chain[seq(1, floor((draws - burn_in)/(thin + 1))) + burn_in, ])
-}
-
-#-------------------------------------------------------------------------------
-
-#' Thinning of a BPWPM
-#'
-#' Thins all of the MCMC chains of a bpwpm and returns an object of the same kind
-#'
-#' @param bpwpm_model A bpwpm object created by \code{\link{bpwpm_gibbs}}
-#' @inheritParams thin_chain
-#'
-#' @return An object of the same kind of the bpwpm but thinned down
-#' @export
-#'
-thin_bpwpm <- function(bpwpm, thin, burn_in){
-
-    if(class(bpwpm) != 'bpwpm'){
-        error("Object not of class bpwpm")
-        geterrmessage()
-    }
-
-    bpwpm_model_copy <- bpwpm
-    bpwpm_model_copy$betas <- thin_chain(bpwpm$betas, thin = thin, burn_in = burn_in)
-    bpwpm_model_copy$w <- lapply(bpwpm$w, thin_chain, thin = thin, burn_in = burn_in)
-
-    return(bpwpm_model_copy)
-}
-
-#-------------------------------------------------------------------------------
-
-#' Puntual estimation for parameters
-#'
-#' Given a model output by the function bpwpm_gibbs, it thins down the chain and
-#' makes puntual estimation for the parameters. This parameter structure can
-#' later be used to calculate the F matrix and other results.
-#'
-#' @inheritParams thin_bpwpm
 #' @param type The type of punctual estimation for the parameters. Options
 #' include: mean, mode or median.
 #'
-#' @return A parameter list that contains the estimations of beta and w.
+#' @return An object of the class bpwpm_params that contains:
+#' \describe{
+#'   \item{\eqn{\beta}}{The posterior estimation for \eqn{\beta}}
+#'   \item{\eqn{w}}{The posterior estimation for w's on each dimention}
+#'   \item{\eqn{\tau}}{The corresponding nodes}
+#'   \item{F}{The final F matrix}
+#'   \item{M}{M parameter}
+#'   \item{J}{J parameter}
+#'   \item{K}{K parameter}
+#'   \item{d}{number of dimentions}
+#'   \item{intercept}{Logical}
+#' }
 #' @export
 #'
 #' @examples (model, 2, 2000, 'mean') (model, 0, 0, 'median')
@@ -106,4 +68,54 @@ posterior_params <- function(bpwpm, thin, burn_in, type = 'mean'){
     class(params) <- 'bpwpm_params'
 
     return(params)
+}
+
+#-------------------------------------------------------------------------------
+
+#' Thin MCMC Chain
+#'
+#' Thins and eliminates the burn in period of the Gibbs Chain.
+#'
+#' @param mcmc_chain An MCMC Chain matrix. (draws * number of params)
+#' @inheritParams posterior_params
+#'
+#' @return The thinned down version of the MCMC chain
+#' @export
+#'
+#' @examples (beta, 2, 2000)
+thin_chain <- function(mcmc_chain, thin, burn_in){
+
+    draws <- dim(mcmc_chain)[1]
+
+    if(burn_in > draws){stop("Burn In parameter too large")
+        geterrmessage()}
+
+    return(mcmc_chain[seq(1, floor((draws - burn_in)/(thin + 1))) + burn_in, ])
+}
+
+#-------------------------------------------------------------------------------
+
+#' Thinning of a BPWPM
+#'
+#' Thins all of the MCMC chains of a bpwpm and returns an object of the same
+#' type
+#'
+#' @param bpwpm A bpwpm object created by \code{\link{bpwpm_gibbs}}
+#' @inheritParams posterior_params
+#'
+#' @return An object of the same kind of the bpwpm but thinned down
+#' @export
+#'
+thin_bpwpm <- function(bpwpm, thin, burn_in){
+
+    if(class(bpwpm) != 'bpwpm'){
+        error("Object not of class bpwpm")
+        geterrmessage()
+    }
+
+    bpwpm_model_copy <- bpwpm
+    bpwpm_model_copy$betas <- thin_chain(bpwpm$betas, thin = thin, burn_in = burn_in)
+    bpwpm_model_copy$w <- lapply(bpwpm$w, thin_chain, thin = thin, burn_in = burn_in)
+
+    return(bpwpm_model_copy)
 }

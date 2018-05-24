@@ -1,5 +1,21 @@
 # Plot Functionality for package bpwpm
+#-------------------------------------------------------------------------------
 
+#' Generic bpwpm plotting
+#'
+#' Once a bpwpm has been run using the function \code{\link{bpwpm_gibbs}}, the
+#' chains can be plotted and hence evaluated. This generic function builds sets
+#' of plots for each parameter of the model, \eqn{\beta}, \eqn{w_1}, \eqn{w_2},
+#' etc.
+#'
+#' @param object of the class bpwpm
+#' @param n number of draws to plot
+#' @param ... additional parameters to be passed to the functions
+#'
+#' @return a series of line plots and histograms
+#' @export
+#'
+#' @examples (model1, 1000), (model2, 2000)
 plot.bpwpm <- function(object, n = 100, ...){
 
     if(!('bpwpm' %in% class(object))){
@@ -32,18 +48,18 @@ plot.bpwpm <- function(object, n = 100, ...){
 #'
 #' Plots the last n draws of an MCMC chain
 #'
+#' @inheritParams plot.bpwpm
 #' @param mcmc_chain An MCMC Chain matrix. (draws * number of params)
-#' @param number The number of draws to plot.
 #' @param title Title for the plot
 #'
-#' @return A ggplot2 plot
+#' @return A ggplot2 lines plot
 #' @export
 #'
 #' @examples plot_chains(betas), plot_chains(w_j, 1000)
-plot_chains <- function(mcmc_chain, number = 100, title = ""){
+plot_chains <- function(mcmc_chain, n = 100, title = ""){
 
     dim_mcmc <- dim(mcmc_chain)
-    n <- min(number, dim_mcmc[1])
+    n <- min(n, dim_mcmc[1])
 
     beta_temp <- tidyr::gather(mcmc_chain[seq(dim_mcmc[1] - n + 1,dim_mcmc[1]),],
                                key = Parameters)
@@ -56,6 +72,16 @@ plot_chains <- function(mcmc_chain, number = 100, title = ""){
 
 #-------------------------------------------------------------------------------
 
+#' Plot MCMC Chains histograms
+#'
+#' Plot the parameters to test for convergence
+#'
+#' @inheritParams plot.bpwpm
+#' @inheritParams plot_chains
+#'
+#' @return A histogram for the n draws and parameters of the chain
+#' @export
+#'
 plot_hist <- function(mcmc_chain, number = 100, title = "", ...){
 
     dim_mcmc <- dim(mcmc_chain)
@@ -73,6 +99,20 @@ plot_hist <- function(mcmc_chain, number = 100, title = "", ...){
 
 #-------------------------------------------------------------------------------
 
+#' Generic function for plotting bpwpm_predictions objects
+#'
+#' Once a model has been run and evaluated, a prediction can be made using the
+#' function \code{\link{predict.bpwpm}}. The Input \code{X} and output \code{Y}
+#' are saved and can be plotted against the final PWP expansion for the model.
+#'
+#' @param object of the class bpwpm_prediction
+#' @param ... other arguments
+#'
+#' @return a series of plots from ggplot2
+#' @export
+#'
+#' @examples (train_set_prediciton),
+#'  (test_set_prediciton)
 plot.bpwpm_prediction <- function(object, ...){
 
     if(!('bpwpm_prediction' %in% class(object))){
@@ -85,9 +125,9 @@ plot.bpwpm_prediction <- function(object, ...){
 
 #-------------------------------------------------------------------------------
 
-#' Plots each F(X)
+#' Plots each dimention f(x)
 #'
-#' With the \code{w} parameters calculated from the Ginns run, and
+#' With the posterior \code{w} parameters calculated from the Gibbs run, and
 #' \code{\link{posterior_params}}, a Final F matrix can be calculated. and
 #' hence, ploted against every Input X to see how does the PWP expansion looks
 #' like for the specified set of parameters.
@@ -99,7 +139,7 @@ plot.bpwpm_prediction <- function(object, ...){
 #' alternativly you can pass it the parameters calculated by function
 #' \code{\link{posterior_params}}
 #'
-#' @return d plots for each dimention
+#' @return d plots for each dimention created using ggplot2
 #' @export
 #'
 plot_each_F <- function(Y, X, F_mat){
@@ -142,15 +182,17 @@ plot_each_F <- function(Y, X, F_mat){
 #'
 #' @param Y A response vector of size n
 #' @param X An input matrix of size n*2.
-#' @param bpwpm_params an object of the class
-#' @param n
-#' @param alpha
-#' @param f_of_0
+#' @param bpwpm_params an object of the class bpwpm_params of bpwpm_prediction
+#' created by the functions \code{\link{posterior_params}} or
+#' \code{\link{predict.bpwpm}} respectively that contains all the info about the
+#' posterior parametres of the model.
+#' @param n Thinness of grid for 2D and 3D projectction
+#' @param alpha numeric - level of transparency for 2D projection
+#' @param f_of_0 Logical if If the constant function 0 is to be plotted
 #'
-#' @return
+#' @return A series of 3 plots to help ilustrate the model
 #' @export
 #'
-#' @examples
 plot_2D <- function(Y, X, bpwpm_params, n, alpha = 0.6, f_of_0 = TRUE){
 
     # Sanitizing Inputs
@@ -195,10 +237,11 @@ plot_2D <- function(Y, X, bpwpm_params, n, alpha = 0.6, f_of_0 = TRUE){
 
 #' Scatter Plot of 2D data
 #'
-#' @inheritParams plot_each_F
-#' @param X Input Matrix of 2D (2 columns).
+#' Scatter plot to visualize the data and it's corresponding groups.
 #'
-#' @return A scatter plot of the 2 groups
+#' @inheritParams plot_2D
+#'
+#' @return A ggplot2 scatter plot
 #' @export
 #'
 #' @examples (Y = rbinom(100, 1, 4), X = cbind(rnorm(100), rnorm(100)))
@@ -225,14 +268,13 @@ plot_2D_data <- function(Y,X){
 
 #' Plot 2D projection of the Model
 #'
-#' Once a model has been run and evaluated, in case that we have a 2D input
-#' matrix, we can plot the projection to evaluate the model and its
-#' corresponding binary outcomes. Instead of plotting the corresponding conotur
-#' of the 3D function ploted by \code{\link{plot_3D_proj}} the output is
-#' converted to its corresponding output and mapped to the 2D input space.
+#' 2D projection of both the inputs and the posterior regions of classification.
+#' Usefull to evaluate the corresponding binary outcomes.
+#' Instead of plotting the corresponding conotur of the 3D function plotted by
+#' \code{\link{plot_3D_proj}}. The projection function is mapped to it's
+#' corresponding binary output and plotted behind the regular data.
 #'
-#' @inheritParams plot_3D_proj
-#' @param alpha the corresponding alpha transparency param for the output space.
+#' @inheritParams plot_2D
 #'
 #' @return A ggplot2 scatter plot
 #' @export
@@ -280,13 +322,11 @@ plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.6){
 #' Plots the 3D representation of the projection function
 #'
 #' Given the set of parmeters and the input data in 2D, this function calculates
-#' and plots the data on a 3D linear space defined by the input matrix X.
-#' @inheritParams plot_2D_data
-#' @inheritParams model_projection
-#' @param n How thin is the grid to be made
-#' @param f_of_0 If the constant function 0 is to be ploted
+#' and plots the wireframe on a 3D linear space defined by the input matrix X.
 #'
-#' @return a 3d WireFrame Plot
+#' @inheritParams plot_2D
+#'
+#' @return a 3D WireFrame Lattice Plot
 #' @export
 #'
 plot_3D_proj <- function(X, bpwpm_params, n, f_of_0 = TRUE){

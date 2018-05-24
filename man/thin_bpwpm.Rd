@@ -7,15 +7,16 @@
 thin_bpwpm(bpwpm, thin, burn_in)
 }
 \arguments{
+\item{bpwpm}{A bpwpm object created by \code{\link{bpwpm_gibbs}}}
+
 \item{thin}{A thinning parameter for the MCMC Chain}
 
 \item{burn_in}{A burn in parameter for the MCMC Chain}
-
-\item{bpwpm_model}{A bpwpm object created by \code{\link{bpwpm_gibbs}}}
 }
 \value{
 An object of the same kind of the bpwpm but thinned down
 }
 \description{
-Thins all of the MCMC chains of a bpwpm and returns an object of the same kind
+Thins all of the MCMC chains of a bpwpm and returns an object of the same
+type
 }
