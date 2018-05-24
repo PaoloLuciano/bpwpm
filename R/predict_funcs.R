@@ -31,12 +31,17 @@
 #'
 #' @examples (model1, train_Y, train_X, 2, 1000, mean)
 #' (model2, test_Y, test_X, 1, 0, mode)
+
 predict.bpwpm <- function(object, new_Y, new_X,
                          thin = 0, burn_in = 0, type = 'mean', ...) {
 
     if(!('bpwpm' %in% class(object))){
         error("Object not of the class bpwpm")
         geterrmessage()
+    }
+
+    if(class(new_Y) == "factor"){
+        new_Y <- as.integer(new_Y) - 1
     }
 
     post_params <- posterior_params(object, thin, burn_in, type)

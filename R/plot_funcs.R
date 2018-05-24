@@ -193,7 +193,7 @@ plot_each_F <- function(Y, X, F_mat){
 #' @return A series of 3 plots to help ilustrate the model
 #' @export
 #'
-plot_2D <- function(Y, X, bpwpm_params, n, alpha = 0.6, f_of_0 = TRUE){
+plot_2D <- function(Y, X, bpwpm_params, n = 10, alpha = 0.6, f_of_0 = TRUE){
 
     # Sanitizing Inputs
     if(dim(X)[2] != 2){
@@ -228,7 +228,7 @@ plot_2D <- function(Y, X, bpwpm_params, n, alpha = 0.6, f_of_0 = TRUE){
     p <- plot_2D_proj(Y, X, bpwpm_params, n, alpha)
     print(p)
     readline(prompt = "Press [enter] to view next plot")
-    p <- plot_3D_proj(X, bpwpm_params, n, f_of_0)
+    p <- plot_3D_proj(X, bpwpm_params, n - 5, f_of_0)
     print(p)
 
 }
@@ -279,7 +279,7 @@ plot_2D_data <- function(Y,X){
 #' @return A ggplot2 scatter plot
 #' @export
 #'
-plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.6){
+plot_2D_proj <- function(Y, X, bpwpm_params, n = 15, alpha = 0.6){
 
     if(dim(X)[2] != 2){
         error("Only a 2D plot can be made. X matrix has diferent dimensions")
@@ -300,7 +300,7 @@ plot_2D_proj <- function(Y, X, bpwpm_params, n, alpha = 0.6){
     linspace <- expand.grid(X1 = seq(mins[1] - 0.2, maxs[1] + 0.2, by = 1/n),
                             X2 = seq(mins[2] - 0.2, maxs[2] + 0.2, by = 1/n))
 
-    linspace$Y <- model_projection(new_data = linspace,
+    linspace$Y <- model_projection(new_X = linspace,
                                    bpwpm_params = bpwpm_params)
 
     linspace$Y<-  as.factor(as.integer(linspace$Y >= 0))
@@ -342,7 +342,7 @@ plot_3D_proj <- function(X, bpwpm_params, n, f_of_0 = TRUE){
     linspace <- expand.grid(X1 = seq(mins[1], maxs[1], by = 1/n),
                             X2 = seq(mins[2], maxs[2], by = 1/n))
 
-    linspace$f <- model_projection(new_data = linspace,
+    linspace$f <- model_projection(linspace,
                                    bpwpm_params = bpwpm_params)
 
     if(f_of_0){
