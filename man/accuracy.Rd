@@ -7,7 +7,7 @@
 accuracy(new_Y, p, verb = FALSE)
 }
 \arguments{
-\item{p}{Vector of fitted probabilities for each case}
+\item{p}{Vector of fitted probabilities for each Y.}
 
 \item{verb}{verbose, if True, prints aditional information (logical)}
 }
@@ -17,8 +17,8 @@ The accuracy of the model, given the fitted probabilities and new data
 \description{
 Given a set of true values and their corresponding fitted probabilities,
 the function calculates the accuracy of the model defined by:
- $1- ,#wrong prediction/# of observations$
+ \eqn{1- #wrong prediction/# of observations}
 }
 \examples{
-(new_Y_ata, fitted_probs_for_data)
+(new_Y, fitted_probs_for_data)
 }

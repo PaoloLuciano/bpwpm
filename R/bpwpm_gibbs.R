@@ -36,9 +36,9 @@
 #' @param verb verbose, if True, prints aditional information (logical)
 #' @param debug If TRUE, print even more info to help with debugging (logical)
 #'
-#' @return An object of the class "bpwpm" containing at least the following
+#' @return An object of the class "bpwpm" containing at the following
 #' components:
-#' \itemize{
+#' \describe{
 #' \item{betas: }{A data frame containing the Gibbs sampler simulation for beta}
 #' \item{w: }{A list of d elements. Each one is a data frame containign the
 #' simulation of the w_j parameters for each dimetnion j.}
@@ -50,6 +50,8 @@
 #' \item{K: }{Initial parameters}
 #' \item{d: }{Number of dimentions}
 #' \item{intercept: }{Logical value}
+#' \item{info}{A string that prints the basic information of the mode. Used for
+#' the summary function.}
 #' }
 #' @export
 #'

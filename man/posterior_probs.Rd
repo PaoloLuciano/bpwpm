@@ -4,20 +4,20 @@
 \alias{posterior_probs}
 \title{Calculate Probabilities of Binary Outcome}
 \usage{
-posterior_probs(new_data, bpwpm_params)
+posterior_probs(new_X, bpwpm_params)
 }
 \arguments{
-\item{new_data}{A new set of data for which to calculate the f(x) projection
+\item{new_X}{A new set of data for which to calculate the f(x) projection
 function}
 
 \item{bpwpm_params}{A list of bpwpm parameters created by the function
 \code{\link{posterior_params}}}
 }
 \value{
-a vector of fitted probabilities for the response variable Y
+A vector of fitted probabilities for the response variable Y
 }
 \description{
-Given a model, we can calculate the corresponding the probabilites of the
+Given a model, we can calculate the corresponding fitted probabilites of the
 random response variable Y. Whereas this is new data or the one used to train
 the model. Since the model is a probit GLM at this point, we only need to
 calculate the projection and then plug them on the inverse of the normal

@@ -4,10 +4,10 @@
 \alias{model_projection}
 \title{Calculates trained model for new Data}
 \usage{
-model_projection(new_data, bpwpm_params)
+model_projection(new_X, bpwpm_params)
 }
 \arguments{
-\item{new_data}{A new set of data for which to calculate the f(x) projection
+\item{new_X}{A new set of data for which to calculate the f(x) projection
 function}
 
 \item{bpwpm_params}{A list of bpwpm parameters created by the function

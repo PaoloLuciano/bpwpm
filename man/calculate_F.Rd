@@ -21,7 +21,7 @@ calculated by \code{\link{calculate_Phi}}}
 F matrix
 }
 \description{
-Private function for calculating the F matrix, described on the thesis.
+Function for calculating the F matrix, described on the thesis.
 This is the transformed input matrix that depends on the piecewise polinomial
 expansion Phi and a set of weights w.
 }

@@ -17,7 +17,8 @@ calculate_Phi(X, M, J, K, d, tau)
 
 \item{d}{Number of dimentions, this parameter helps to improve efficiency}
 
-\item{tau}{matrix containing the nodes in which to split the Piecewise Polinomials}
+\item{tau}{matrix containing the nodes in which to split the Piecewise
+Polinomials}
 }
 \value{
 A list of PWP expansion matrixes for each dimention d.

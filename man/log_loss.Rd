@@ -10,7 +10,7 @@ log_loss(Y, p, eps = 1e-15, verb = TRUE)
 \item{Y}{Response vector of n binary observatios (integers 0,1 - vector of
 size n) Can be encoded as a factor a numeric vector.}
 
-\item{p}{Vector of fitted probabilities for each case}
+\item{p}{Vector of fitted probabilities for each Y.}
 
 \item{eps}{Machine error to hanlde limit cases on the logarithm function}
 
@@ -25,5 +25,5 @@ An implementation of the Log-Loss function for the binomial case
 \examples{
 log_loss(true_values, fitted probabilities)
 log_loss(true_values, fitted probabilities)
-#' log_loss(true_values, fitted probabilities, 1e-30, FALSE)
+log_loss(true_values, fitted probabilities, 1e-30, FALSE)
 }

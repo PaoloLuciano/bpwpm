@@ -1,5 +1,5 @@
-# Math Utils
-
+# Math Utils for the bpwpm package
+#-------------------------------------------------------------------------------
 #' Piece wise polinomial expansion for X (PWP)
 #'
 #' Calculates and returns a list of matrixes, each one representing a PWP
@@ -9,7 +9,8 @@
 #'
 #' @inheritParams bpwpm_gibbs
 #' @inheritParams calculate_F
-#' @param tau matrix containing the nodes in which to split the Piecewise Polinomials
+#' @param tau matrix containing the nodes in which to split the Piecewise
+#' Polinomials
 #'
 #' @return A list of PWP expansion matrixes for each dimention d.
 #'
@@ -57,7 +58,7 @@ calculate_Phi <- function(X, M, J, K, d, tau){
 
 #' F matrix calculation
 #'
-#' Private function for calculating the F matrix, described on the thesis.
+#' Function for calculating the F matrix, described on the thesis.
 #' This is the transformed input matrix that depends on the piecewise polinomial
 #' expansion Phi and a set of weights w.
 #'
@@ -97,14 +98,14 @@ calculate_F <- function(Phi, w, d, intercept){
 #' An implementation of the Log-Loss function for the binomial case
 #'
 #' @inheritParams bpwpm_gibbs
-#' @param p Vector of fitted probabilities for each case
+#' @param p Vector of fitted probabilities for each Y.
 #' @param eps Machine error to hanlde limit cases on the logarithm function
 #'
 #' @return The value of the Log Loss function (numeric). The smaller, the better
 #'
 #' @examples log_loss(true_values, fitted probabilities)
 #' log_loss(true_values, fitted probabilities)
-#' #' log_loss(true_values, fitted probabilities, 1e-30, FALSE)
+#' log_loss(true_values, fitted probabilities, 1e-30, FALSE)
 log_loss <- function(Y, p, eps = 1e-15, verb = TRUE){
 
     if(class(Y) == "factor"){
@@ -161,7 +162,7 @@ calculate_projection <- function(F_mat, betas){
 #' Given a set of parameters inherited by the \code{\link{bpwpm_gibbs}} training
 #' procedure, we calculate the value of the projection function for new data.
 #' This function is both used on the predict and plot_3D functions.
-#' @param new_data A new set of data for which to calculate the f(x) projection
+#' @param new_X A new set of data for which to calculate the f(x) projection
 #' function
 #' @param bpwpm_params A list of bpwpm parameters created by the function
 #' \code{\link{posterior_params}}
@@ -170,14 +171,14 @@ calculate_projection <- function(F_mat, betas){
 #' @export
 #'
 #' @examples (test_data, mean_params)
-model_projection <- function(new_data, bpwpm_params){
+model_projection <- function(new_X, bpwpm_params){
 
     if(class(bpwpm_params) != "bpwpm_params"){
-        error("Invalid bpwpm parameters")
+        error("Invalid class, object should be of class bpwpm_params")
         geterrmessage()
     }
 
-    Phi <- calculate_Phi(X = new_data,
+    Phi <- calculate_Phi(X = new_X,
                          M = bpwpm_params$M, J = bpwpm_params$J,
                          K = bpwpm_params$K, d = bpwpm_params$d,
                          tau = bpwpm_params$tau)
@@ -192,7 +193,7 @@ model_projection <- function(new_data, bpwpm_params){
 
 #' Calculate Probabilities of Binary Outcome
 #'
-#' Given a model, we can calculate the corresponding the probabilites of the
+#' Given a model, we can calculate the corresponding fitted probabilites of the
 #' random response variable Y. Whereas this is new data or the one used to train
 #' the model. Since the model is a probit GLM at this point, we only need to
 #' calculate the projection and then plug them on the inverse of the normal
@@ -200,16 +201,17 @@ model_projection <- function(new_data, bpwpm_params){
 #'
 #' @inheritParams model_projection
 #'
-#' @return a vector of fitted probabilities for the response variable Y
+#' @return A vector of fitted probabilities for the response variable Y
 #' @export
 #'
-posterior_probs <- function(new_data, bpwpm_params){
+posterior_probs <- function(new_X, bpwpm_params){
     if(class(bpwpm_params) != "bpwpm_params"){
         error("Invalid bpwpm parameters")
         geterrmessage()
     }
 
-    z <- model_projection(new_data = new_data, bpwpm_params)
+    z <- model_projection(new_X,
+                          bpwpm_params)
 
     return(pnorm(z))
 }
@@ -220,14 +222,14 @@ posterior_probs <- function(new_data, bpwpm_params){
 #'
 #' Given a set of true values and their corresponding fitted probabilities,
 #' the function calculates the accuracy of the model defined by:
-#'  $1- ,#wrong prediction/# of observations$
+#'  \eqn{1- #wrong prediction/# of observations}
 #'
 #' @inheritParams  log_loss
 #'
 #' @return The accuracy of the model, given the fitted probabilities and new data
 #' @export
 #'
-#' @examples (new_Y_ata, fitted_probs_for_data)
+#' @examples (new_Y, fitted_probs_for_data)
 accuracy <- function(new_Y, p, verb = FALSE){
 
     if(class(new_Y) == "factor"){
@@ -247,6 +249,15 @@ accuracy <- function(new_Y, p, verb = FALSE){
 }
 
 #-------------------------------------------------------------------------------
+#' Contingency Table for the prediciton of a bpwpm
+#'
+#' @param new_Y Response variable to test the model for
+#' @param p Vector of fitted probabilities
+#'
+#' @return
+#' @export
+#'
+#' @examples
 contingency_table <- function(new_Y, p){
 
     n <- length(new_Y)
