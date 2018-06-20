@@ -13,6 +13,7 @@
 #' Polinomials
 #'
 #' @return A list of PWP expansion matrixes for each dimention d.
+#' @export
 #'
 calculate_Phi <- function(X, M, J, K, d, tau){
 
@@ -102,6 +103,7 @@ calculate_F <- function(Phi, w, d, intercept){
 #' @param eps Machine error to hanlde limit cases on the logarithm function
 #'
 #' @return The value of the Log Loss function (numeric). The smaller, the better
+#' @export
 #'
 #' @examples log_loss(true_values, fitted probabilities)
 #' log_loss(true_values, fitted probabilities)
@@ -254,11 +256,15 @@ accuracy <- function(new_Y, p, verb = FALSE){
 #' @param new_Y Response variable to test the model for
 #' @param p Vector of fitted probabilities
 #'
-#' @return
+#' @return The contingency table
 #' @export
 #'
-#' @examples
+#' @examples contingency_table(train_y, est_p)
 contingency_table <- function(new_Y, p){
+
+    if(class(new_Y) == "factor"){
+        new_Y <- as.integer(Y) - 1
+    }
 
     n <- length(new_Y)
     est_Y <- rep(0, times = n)

@@ -20,8 +20,6 @@
 #'   > 0)
 #' @param tau the initial position of nodes selected by the user. although·
 #' arbitraty they need to match the dimentions. (numeric - (J-1)*d)
-#' @param z_init z_init:= Initial values for Auxiliary variable z (numeric -
-#'   vector of size n)
 #' @param beta_init Initial value for the Gibbs Sampler Chain (numeric - vector
 #'   of size d)
 #' @param mu_beta_0 Prior Mean of Beta (numeric - vector of size d)
@@ -61,7 +59,7 @@
 bpwpm_gibbs <- function(Y, X, M, J, K,
                 intercept = TRUE, precision_beta = 1, precision_w = 1,
                 draws = 10^3, tau = NULL,
-                z_init = NULL, beta_init = NULL, mu_beta_0 = NULL,
+                beta_init = NULL, mu_beta_0 = NULL,
                 sigma_beta_0_inv = NULL,
                 w_init = NULL, mu_w_0 = NULL, sigma_w_0_inv = NULL,
                 verb = FALSE, debug = FALSE){
@@ -75,14 +73,7 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
     N <- M * J - K * (J - 1) # Númber of basis funcitons
 
-    # Z Initial parameters
-    if(is.null(z_init)){
-        z <- rep(0,n) # Standard z
-    }else{
-        z <- z_init
-    }
-
-    # Initial parameters for beta
+     # Initial parameters for beta
     if(intercept){
         if(is.null(beta_init)){
             betas <- rep(0,d+1) # Standard beta
@@ -194,6 +185,7 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
     # For speed calculation
     Phi_cross <- lapply(X = Phi, FUN = function(x){crossprod(x,x)})
+    z <- rep(0, times = n)
 
     # 2. Gibbs Sampler, z -> beta -> w -> F -> z -> ... ------------------------
 

@@ -11,6 +11,12 @@ contingency_table(new_Y, p)
 
 \item{p}{Vector of fitted probabilities}
 }
+\value{
+The contingency table
+}
 \description{
 Contingency Table for the prediciton of a bpwpm
+}
+\examples{
+contingency_table(train_y, est_p)
 }

@@ -4,7 +4,7 @@
 \alias{plot_2D_proj}
 \title{Plot 2D projection of the Model}
 \usage{
-plot_2D_proj(Y, X, bpwpm_params, n, alpha = 0.6)
+plot_2D_proj(Y, X, bpwpm_params, n = 15, alpha = 0.6)
 }
 \arguments{
 \item{Y}{A response vector of size n}

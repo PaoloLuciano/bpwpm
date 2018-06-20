@@ -4,7 +4,7 @@
 \alias{plot_2D}
 \title{Wrapper Function for 2D Input Plots}
 \usage{
-plot_2D(Y, X, bpwpm_params, n, alpha = 0.6, f_of_0 = TRUE)
+plot_2D(Y, X, bpwpm_params, n = 10, alpha = 0.6, f_of_0 = TRUE)
 }
 \arguments{
 \item{Y}{A response vector of size n}
