@@ -369,3 +369,38 @@ plot_3D_proj <- function(X, bpwpm_params, n, f_of_0 = TRUE){
     # at = 0, col.regions = c("red", "blue"))
 
 }
+
+#-------------------------------------------------------------------------------
+#' Plot Ergodic Mean
+#'
+#' Plots the Ergodic Mean of an object of class \code{bpwpm}
+#'
+#' @inheritParams plot.bpwpm
+#' @inheritParams thin_chain
+#'
+#' @return A series of plots for the ergodic mean of the parameters
+#' @export
+#'
+#' @examples (model1, 0, 0)
+plot_ergodic_mean <- function(object, thin, burn_in, ...){
+
+    if(!('bpwpm' %in% class(object))){
+        error("Object not of the class bpwpm")
+        geterrmessage()
+    }
+
+    thin_object <- thin_bpwpm(object, thin, burn_in)
+    # Plots the whole erg
+    n <- dim(thin_object$betas)[1]
+    em_temp <- ergodic_mean(thin_object$betas)
+    p <- plot_chains(data.frame(em_temp), n, title = "Betas - Ergodic Mean")
+    print(p)
+
+    for(i in seq(1, length(thin_object$w))){
+        readline(prompt = "Press [enter] to view next plot")
+
+        em_temp <- ergodic_mean(thin_object$w[[i]])
+        p <- plot_chains(data.frame(em_temp), n, title = paste("w_",i," - Ergodic Mean", sep = ""))
+        print(p)
+    }
+}

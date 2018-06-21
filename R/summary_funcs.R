@@ -13,7 +13,7 @@
 #' @return Prints out summarized information
 #' @export
 #'
-summary.bpwpm <- function(object,
+summary.bpwpm <- function(object, thin = 0, burn_in = 0,
                           digits = max(3L, getOption("digits") - 3L), ...) {
 
     if(!('bpwpm' %in% class(object))){
@@ -38,9 +38,11 @@ summary.bpwpm <- function(object,
         print(t(temp))
     }
 
-    print_info(object$betas, "Betas", digits)
+    thin_object <- thin_bpwpm(object, thin, burn_in)
 
-    for(i in seq(1, length(object$w))){
+    print_info(thin_object$betas, "Betas", digits)
+
+    for(i in seq(1, length(thin_object$w))){
         print_info(object$w[[i]], paste("w_",i, sep = ""), digits)
     }
 }

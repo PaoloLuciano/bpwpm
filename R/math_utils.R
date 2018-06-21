@@ -286,3 +286,18 @@ contingency_table <- function(new_Y, p){
     return(ct)
 }
 
+#-------------------------------------------------------------------------------
+#' Ergodic Mean
+#'
+#' Calculates the Ergodic Mean for an MCMC_Chain Matrix producede as output from
+#' \code{\link{bpwpm_chain}}. It is used by the \code{\link{plot_ergodic_mean}}
+#'  function, but left available for the user.
+#' @param mcmc_chain
+#'
+#' @return The Ergodic Mean Matrix
+#' @export
+#'
+#' @examples MA_betas <- (betas)
+ergodic_mean <- function(mcmc_chain){
+    return(apply(mcmc_chain,2,cumsum)/seq(1:dim(mcmc_chain)[1]))
+}
