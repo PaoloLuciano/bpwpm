@@ -120,6 +120,7 @@ plot.bpwpm_prediction <- function(object, ...){
         geterrmessage()
     }
 
+
     plot_each_F(object$Y, object$X, object$bpwpm_params)
 }
 
@@ -145,7 +146,21 @@ plot.bpwpm_prediction <- function(object, ...){
 plot_each_F <- function(Y, X, F_mat){
 
     if(class(F_mat) == "bpwpm_params"){
-        F_mat <- F_mat$estimated_F
+
+        if(dim(X)[1] == dim(F_mat$estimated_F)[1]){
+            cat("Old F is being used")
+            F_mat <- F_mat$estimated_F
+        }
+        else{
+            cat("Calculating new F")
+            M <- F_mat$M
+            J <- F_mat$J
+            K <- F_mat$K
+            d <- F_mat$d
+            tau <- F_mat$tau
+            Phi <- calculate_Phi(X,M,J,K,d,tau)
+            F_mat <- calculate_F(Phi, F_mat$w, d, F_mat$intercept)
+        }
     }
 
     d <- dim(X)[2]
@@ -382,7 +397,7 @@ plot_3D_proj <- function(X, bpwpm_params, n, f_of_0 = TRUE){
 #' @export
 #'
 #' @examples (model1, 0, 0)
-plot_ergodic_mean <- function(object, thin, burn_in, ...){
+plot_ergodic_mean <- function(object, thin = 0, burn_in = 0, ...){
 
     if(!('bpwpm' %in% class(object))){
         error("Object not of the class bpwpm")

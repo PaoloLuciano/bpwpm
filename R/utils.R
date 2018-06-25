@@ -37,7 +37,7 @@ posterior_params <- function(bpwpm, thin, burn_in, type = 'mean'){
 
     if(type == 'mean'){func <- mean}
     else if(type == 'mode'){func <- mode}
-    else if(type == 'media'){func <- median}
+    else if(type == 'median'){func <- median}
     else{error("Incorrect type of parameter estimation")
         geterrmessage()}
 
