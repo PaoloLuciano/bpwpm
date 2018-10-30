@@ -4,8 +4,8 @@
 \alias{summary.bpwpm_params}
 \title{Summarizes the parameters of an bpwpm}
 \usage{
-\method{summary}{bpwpm_params}(object, digits = max(3L, getOption("digits") -
-  3L), verb = FALSE, ...)
+\method{summary}{bpwpm_params}(object, digits = max(3L,
+  getOption("digits") - 3L), verb = FALSE, ...)
 }
 \arguments{
 \item{object}{An object of the class bpwpm_params}

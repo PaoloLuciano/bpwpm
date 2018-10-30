@@ -11,7 +11,7 @@ calculate_Phi(X, M, J, K, d, tau)
 
 \item{M}{M minus 1 is the degree of the polinomial (integer - M > 0)}
 
-\item{J}{Númber of intervals in each dimention (integer - J > 1)}
+\item{J}{Number of intervals in each dimention (integer - J > 1)}
 
 \item{K}{Order of continuity in the derivatives (integrer - K < M)}
 

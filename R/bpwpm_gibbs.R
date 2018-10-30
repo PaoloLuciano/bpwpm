@@ -7,7 +7,7 @@
 #'   size n) Can be encoded as a factor a numeric vector.
 #' @param X Design matrix of n observations and d covariables (numeric - n*d)
 #' @param M M minus 1 is the degree of the polinomial (integer - M > 0)
-#' @param J Númber of intervals in each dimention (integer - J > 1)
+#' @param J Number of intervals in each dimention (integer - J > 1)
 #' @param K Order of continuity in the derivatives (integrer - K < M)
 #' @param intercept Intercept:= To add an itercept term to the estimation. It's
 #'   recomended to have one (logical)
@@ -20,10 +20,10 @@
 #'   > 0)
 #' @param tau the initial position of nodes selected by the user. although·
 #' arbitraty they need to match the dimentions. (numeric - (J-1)*d)
-#' @param beta_init Initial value for the Gibbs Sampler Chain (numeric - vector
+# @param beta_init Initial value for the Gibbs Sampler Chain (numeric - vector
 #'   of size d)
-#' @param mu_beta_0 Prior Mean of Beta (numeric - vector of size d)
-#' @param sigma_beta_0_inv Prior Inverse of the Variance-Covariance Matrix of
+# @param mu_beta_0 Prior Mean of Beta (numeric - vector of size d)
+# @param sigma_beta_0_inv Prior Inverse of the Variance-Covariance Matrix of
 #'   beta (numeric - matrix of size d*d)
 #' @param w_init Inital value for the Gibbs Sampler Chain (numeric - matrix of
 #'   size N*d)
@@ -59,8 +59,9 @@
 bpwpm_gibbs <- function(Y, X, M, J, K,
                 intercept = TRUE, precision_beta = 1, precision_w = 1,
                 draws = 10^3, tau = NULL,
-                beta_init = NULL, mu_beta_0 = NULL,
-                sigma_beta_0_inv = NULL,
+                #beta_init = NULL,
+                #mu_beta_0 = NULL,
+                #sigma_beta_0_inv = NULL,
                 w_init = NULL, mu_w_0 = NULL, sigma_w_0_inv = NULL,
                 verb = FALSE, debug = FALSE){
 
@@ -75,30 +76,9 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
      # Initial parameters for beta
     if(intercept){
-        if(is.null(beta_init)){
-            betas <- rep(0,d+1) # Standard beta
-        }else{
-            betas <- beta_init
-        }
-        if(is.null(mu_beta_0)){
-            mu_beta_0 <- rep(0,d+1)
-        }
-        if(is.null(sigma_beta_0_inv)){
-            sigma_beta_0_inv <- precision_beta*diag(d+1)
-        }
-
+        betas <- rep(1,d+1) # Setting beta to 1
     }else{
-        if(is.null(beta_init)){
-            betas <- rep(0,d) # Standard beta
-        }else{
-            betas <- beta_init
-        }
-        if(is.null(mu_beta_0)){
-            mu_beta_0 <- rep(0,d)
-        }
-        if(is.null(sigma_beta_0_inv)){
-            sigma_beta_0_inv <- precision_beta*diag(d)
-        }
+        betas <- rep(1,d)
     }
 
     # Initial parameters for w
@@ -201,16 +181,16 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
         # 2.1. Z - Sampling from the truncated normal distribution for Z.
         z[Y == 0] <- qnorm(runif(n = sum(1-Y),0,
-                                 pnorm(0,eta[Y == 0],1)),eta[Y==0],1)
+                                 pnorm(0,eta[Y == 0],1)),eta[Y == 0],1)
         z[Y == 1] <- qnorm(runif(sum(Y),
                                  pnorm(0,eta[Y == 1],1),1), eta[Y == 1], 1)
 
 
         # 2.2. BETA - Sampling from the final distribution for beta
-        sigma_beta <- solve(sigma_beta_0_inv + crossprod(F_mat,F_mat))
-        mu_beta <- crossprod(t(sigma_beta),(crossprod(t(sigma_beta_0_inv),mu_beta_0) +
-                                                crossprod(F_mat,z)))
-        betas <- c(mvtnorm::rmvnorm(1,mu_beta,sigma_beta)) # Simulating from the resulting distribution
+        #sigma_beta <- solve(sigma_beta_0_inv + crossprod(F_mat,F_mat))
+        #mu_beta <- crossprod(t(sigma_beta),(crossprod(t(sigma_beta_0_inv),mu_beta_0) +
+        #                                        crossprod(F_mat,z)))
+        # betas <- c(mvtnorm::rmvnorm(1,mu_beta,sigma_beta)) # Simulating from the resulting distribution
 
         # Making beta simulation matrix
         if(k == 1){

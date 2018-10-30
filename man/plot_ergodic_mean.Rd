@@ -4,7 +4,7 @@
 \alias{plot_ergodic_mean}
 \title{Plot Ergodic Mean}
 \usage{
-plot_ergodic_mean(object, thin, burn_in, ...)
+plot_ergodic_mean(object, thin = 0, burn_in = 0, ...)
 }
 \arguments{
 \item{object}{of the class bpwpm}

@@ -4,8 +4,8 @@
 \alias{summary.bpwpm}
 \title{Summarizes an bpwpm run}
 \usage{
-\method{summary}{bpwpm}(object, thin = 0, burn_in = 0, digits = max(3L,
-  getOption("digits") - 3L), ...)
+\method{summary}{bpwpm}(object, thin = 0, burn_in = 0,
+  digits = max(3L, getOption("digits") - 3L), ...)
 }
 \arguments{
 \item{object}{of the class bpwpm}

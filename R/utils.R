@@ -1,4 +1,4 @@
-# Series of utility functions to evaluate the MCMC chain for the bpwpm model
+    # Series of utility functions to evaluate the MCMC chain for the bpwpm model
 #-------------------------------------------------------------------------------
 #' Puntual Posterior Estimation of bpwpm Parameters
 #'
