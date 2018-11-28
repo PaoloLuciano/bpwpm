@@ -163,7 +163,7 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
     # List for storing w.
     sim_w <- list()
 
-    # For speed calculation
+    # For speedy calculation
     Phi_cross <- lapply(X = Phi, FUN = function(x){crossprod(x,x)})
     z <- rep(0, times = n)
 
@@ -180,11 +180,15 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
         eta <- crossprod(t(F_mat),betas)
 
         # 2.1. Z - Sampling from the truncated normal distribution for Z.
-        z[Y == 0] <- qnorm(runif(n = sum(1-Y),0,
-                                 pnorm(0,eta[Y == 0],1)),eta[Y == 0],1)
-        z[Y == 1] <- qnorm(runif(sum(Y),
-                                 pnorm(0,eta[Y == 1],1),1), eta[Y == 1], 1)
+        eps <- 1e-15
 
+        temp_probs <- pnorm(0,eta,1)
+        temp_probs = pmin(pmax(temp_probs, eps), 1-eps)
+
+        z[Y == 0] <- qnorm(runif(n = sum(1-Y), min = 0,
+                                 max = temp_probs[Y == 0]), eta[Y == 0],1)
+        z[Y == 1] <- qnorm(runif(n = sum(Y),
+                                 min = temp_probs[Y == 1],max = 1), eta[Y == 1], 1)
 
         # 2.2. BETA - Sampling from the final distribution for beta
         #sigma_beta <- solve(sigma_beta_0_inv + crossprod(F_mat,F_mat))
@@ -194,10 +198,12 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
         # Making beta simulation matrix
         if(k == 1){
-            sim_beta <- betas
+            sim_beta <- betas # First iteration
         }else{
-            sim_beta <- rbind(sim_beta,betas)
+            sim_beta <- rbind(sim_beta,betas) # Apending Betas
         }
+
+        betas[1] <- mean(z)
 
         if(verb){
             cat("\n\tBeta:\t", format(betas,digits = 2, width = 10), sep = "")

@@ -61,10 +61,10 @@ plot_chains <- function(mcmc_chain, n = 100, title = ""){
     dim_mcmc <- dim(mcmc_chain)
     n <- min(n, dim_mcmc[1])
 
-    beta_temp <- tidyr::gather(mcmc_chain[seq(dim_mcmc[1] - n + 1,dim_mcmc[1]),],
+    mcmc_temp <- tidyr::gather(mcmc_chain[seq(dim_mcmc[1] - n + 1,dim_mcmc[1]),],
                                key = Parameters)
 
-    ggplot2::ggplot(beta_temp, aes(x = rep(seq(1,n),dim_mcmc[2]),
+    ggplot2::ggplot(mcmc_temp, aes(x = rep(seq(1,n),dim_mcmc[2]),
                                    y = value, group = Parameters,
                                    colour = Parameters)) +
              geom_line() + xlab("Index") + ylab("Value") + ggtitle(title)
