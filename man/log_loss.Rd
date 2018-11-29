@@ -14,7 +14,7 @@ size n) Can be encoded as a factor a numeric vector.}
 
 \item{eps}{Machine error to hanlde limit cases on the logarithm function}
 
-\item{verb}{verbose, if True, prints aditional information (logical)}
+\item{verb}{short for verbose, if TRUE, prints aditional information (logical)}
 }
 \value{
 The value of the Log Loss function (numeric). The smaller, the better

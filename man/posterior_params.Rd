@@ -27,7 +27,7 @@ An object of the class bpwpm_params that contains:
   \item{J}{J parameter}
   \item{K}{K parameter}
   \item{d}{number of dimentions}
-  \item{intercept}{Logical}
+  \item{indep_terms}{Logical}
 }
 }
 \description{

@@ -4,10 +4,9 @@
 \alias{bpwpm_gibbs}
 \title{Bayesian Piecewise Polinomial Model}
 \usage{
-bpwpm_gibbs(Y, X, M, J, K, intercept = TRUE, precision_beta = 1,
-  precision_w = 1, draws = 10^3, tau = NULL, beta_init = NULL,
-  mu_beta_0 = NULL, sigma_beta_0_inv = NULL, w_init = NULL,
-  mu_w_0 = NULL, sigma_w_0_inv = NULL, verb = FALSE, debug = FALSE)
+bpwpm_gibbs(Y, X, M, J, K, precision_w = 1, draws = 10^3, tau = NULL,
+  w_init = NULL, mu_w_0 = NULL, sigma_w_0_inv = NULL,
+  indep_terms = FALSE, verb = FALSE, debug = FALSE)
 }
 \arguments{
 \item{Y}{Response vector of n binary observatios (integers 0,1 - vector of
@@ -21,13 +20,6 @@ size n) Can be encoded as a factor a numeric vector.}
 
 \item{K}{Order of continuity in the derivatives (integrer - K < M)}
 
-\item{intercept}{Intercept:= To add an itercept term to the estimation. It's
-recomended to have one (logical)}
-
-\item{precision_beta}{If using the default sigmas for betas, a diagonal
-matrix will be used. Precision controls its magnitude (numeric - precision
-> 0)}
-
 \item{precision_w}{If using the default sigmas for w, a diagonal matrix will
 be used. Precision controls its magnitude (numeric - precision > 0)}
 
@@ -35,15 +27,9 @@ be used. Precision controls its magnitude (numeric - precision > 0)}
 > 0)}
 
 \item{tau}{the initial position of nodes selected by the user. although·
-arbitraty they need to match the dimentions. (numeric - (J-1)*d)}
-
-\item{beta_init}{Initial value for the Gibbs Sampler Chain (numeric - vector
-of size d)}
-
-\item{mu_beta_0}{Prior Mean of Beta (numeric - vector of size d)}
-
-\item{sigma_beta_0_inv}{Prior Inverse of the Variance-Covariance Matrix of
-beta (numeric - matrix of size d*d)}
+arbitraty they need to match the dimentions. (numeric - (J-1)*d)
+  of size d)
+  beta (numeric - matrix of size d*d)}
 
 \item{w_init}{Inital value for the Gibbs Sampler Chain (numeric - matrix of
 size N*d)}
@@ -54,7 +40,10 @@ size N*d)}
 Matrices of w (list - d elements, each element is a numeric matrix of size
 N*N)}
 
-\item{verb}{verbose, if True, prints aditional information (logical)}
+\item{indep_terms}{Keeps the independent terms in the PWP expansion.
+Leaving those terms might lead to identificability errors. (logical)}
+
+\item{verb}{short for verbose, if TRUE, prints aditional information (logical)}
 
 \item{debug}{If TRUE, print even more info to help with debugging (logical)}
 }
@@ -72,7 +61,7 @@ percentiles}
 \item{J: }{Initial parameters}
 \item{K: }{Initial parameters}
 \item{d: }{Number of dimentions}
-\item{intercept: }{Logical value}
+\item{indep_terms: }{Logical. If independent terms are keept}
 \item{info}{A string that prints the basic information of the mode. Used for
 the summary function.}
 }

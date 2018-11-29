@@ -15,41 +15,81 @@
 #' @return A list of PWP expansion matrixes for each dimention d.
 #' @export
 #'
-calculate_Phi <- function(X, M, J, K, d, tau){
+calculate_Phi <- function(X, M, J, K, d, tau, indep_terms){
 
     # Phi is a list containing the basis transformations matrices for each dimension j.
     # For now, this basis expansion is done following the formula on the thesis, optimized as much as posible
     Phi <- list()
-    for(j in seq(1,d)){
 
-        # Creating the first regular polinomial
-        Phi_partial <- sapply(X = seq(0, M-1), FUN = function(x,y){y^x}, y = X[ , j])
+    if (indep_terms) {
+        for(j in seq(1,d)){
 
-        # Piecewise part
-        for(k in seq(1,J-1)){
+            # Creating the first basis polinomial
+            Phi_partial <- sapply(X = seq(0, M-1), FUN = function(x,y){y^x}, y = X[ , j])
 
-            # A diagram of this can be found on the thesis
-            # Note that in the limit case that K = 0 we need to make adjustments since 0^0 = 1
-            if(K != 0){
-                Phi_partial <- cbind(Phi_partial, sapply(X = seq(K, M-1),
-                                                         FUN = function(x,y){y^x},
-                                                         y = pmax(0, X[ ,j] - tau[k,j])))
-            }
-            else{
-                temp <- pmax(0, X[ ,j] - tau[k,j])
-                temp[temp > 0] <- 1
-                Phi_partial <- cbind(Phi_partial, temp)
+            # Piecewise part
+            for(k in seq(1,J-1)){
 
-                if(M > 1){
-                    Phi_partial <- cbind(Phi_partial, sapply(X = seq(1,M-1),
+                # A diagram of this can be found on the thesis
+                # Note that in the limit case that K = 0 we need to make adjustments since 0^0 = 1
+                if(K != 0){
+                    Phi_partial <- cbind(Phi_partial, sapply(X = seq(K, M-1),
                                                              FUN = function(x,y){y^x},
                                                              y = pmax(0, X[ ,j] - tau[k,j])))
                 }
+                else{
+                    temp <- pmax(0, X[ ,j] - tau[k,j])
+                    temp[temp > 0] <- 1
+                    Phi_partial <- cbind(Phi_partial, temp)
+
+                    if(M > 1){
+                        Phi_partial <- cbind(Phi_partial, sapply(X = seq(1,M-1),
+                                                                 FUN = function(x,y){y^x},
+                                                                 y = pmax(0, X[ ,j] - tau[k,j])))
+                    }
+                }
             }
+
+            Phi[[j]] <- Phi_partial
+        }
+    }else{
+        if(K == 0){
+            stop("For correct specification of the model K must be at least 1")
+            geterrmessage()
         }
 
-        Phi[[j]] <- Phi_partial
+        for(j in seq(1,d)){
+
+            # Creating the first basis polinomial
+            Phi_partial <- sapply(X = seq(1, M-1), FUN = function(x,y){y^x}, y = X[ , j])
+
+            # Piecewise part
+            for(k in seq(1,J-1)){
+
+                # A diagram of this can be found on the thesis
+                # Note that in the limit case that K = 0 we need to make adjustments since 0^0 = 1
+                if(K != 0){
+                    Phi_partial <- cbind(Phi_partial, sapply(X = seq(K, M-1),
+                                                             FUN = function(x,y){y^x},
+                                                             y = pmax(0, X[ ,j] - tau[k,j])))
+                }
+                else{
+                    temp <- pmax(0, X[ ,j] - tau[k,j])
+                    temp[temp > 0] <- 1
+                    Phi_partial <- cbind(Phi_partial, temp)
+
+                    if(M > 1){
+                        Phi_partial <- cbind(Phi_partial, sapply(X = seq(1,M-1),
+                                                                 FUN = function(x,y){y^x},
+                                                                 y = pmax(0, X[ ,j] - tau[k,j])))
+                    }
+                }
+            }
+
+            Phi[[j]] <- Phi_partial
+        }
     }
+
 
     return(Phi)
 
@@ -68,12 +108,11 @@ calculate_Phi <- function(X, M, J, K, d, tau){
 #' @param w Set of weights for which to calculate F. Numerical matrix of size
 #' (N*d)
 #' @param d Number of dimentions, this parameter helps to improve efficiency
-#' @param intercept Intercept optional paramter. Logical
 #'
 #' @return F matrix
 #' @export
 #'
-calculate_F <- function(Phi, w, d, intercept){
+calculate_F <- function(Phi, w, d){
 
 
     # Calculating F matrix
@@ -85,10 +124,8 @@ calculate_F <- function(Phi, w, d, intercept){
         }
     }
 
-    # Adding intercept terms
-    if(intercept){
-        mat_F <- cbind(rep(1,dim(mat_F)[1]), mat_F)
-    }
+    # Adding independent term
+    mat_F <- cbind(rep(1,dim(mat_F)[1]), mat_F)
     return(mat_F)
 }
 
@@ -183,10 +220,10 @@ model_projection <- function(new_X, bpwpm_params){
     Phi <- calculate_Phi(X = new_X,
                          M = bpwpm_params$M, J = bpwpm_params$J,
                          K = bpwpm_params$K, d = bpwpm_params$d,
-                         tau = bpwpm_params$tau)
+                         tau = bpwpm_params$tau,
+                         indep_terms = bpwpm_params$indep_terms)
 
-    F_mat <- calculate_F(Phi = Phi, bpwpm_params$w, d = bpwpm_params$d,
-                         intercept = bpwpm_params$intercept)
+    F_mat <- calculate_F(Phi = Phi, bpwpm_params$w, d = bpwpm_params$d)
 
     return(calculate_projection(F_mat = F_mat, betas = bpwpm_params$betas))
 }

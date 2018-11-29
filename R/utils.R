@@ -23,7 +23,7 @@
 #'   \item{J}{J parameter}
 #'   \item{K}{K parameter}
 #'   \item{d}{number of dimentions}
-#'   \item{intercept}{Logical}
+#'   \item{indep_terms}{Logical}
 #' }
 #' @export
 #'
@@ -53,8 +53,7 @@ posterior_params <- function(bpwpm, thin, burn_in, type = 'mean'){
     estimated_w <- data.frame(matrix(unlist(estimated_w), ncol = length(estimated_w)))
     colnames(estimated_w) <- paste("w_", seq(1,dim(estimated_w)[2]), sep = "")
 
-    estimated_F <- calculate_F(bpwpm$Phi,estimated_w, d = bpwpm$d,
-                               intercept = bpwpm$intercept)
+    estimated_F <- calculate_F(bpwpm$Phi,estimated_w, d = bpwpm$d)
 
     params <- list(betas = estimated_betas,
                    w = estimated_w,
@@ -64,7 +63,7 @@ posterior_params <- function(bpwpm, thin, burn_in, type = 'mean'){
                    J = bpwpm$J,
                    K = bpwpm$K,
                    d = bpwpm$d,
-                   intercept = bpwpm$intercept)
+                   indep_terms = bpwpm$indep_terms)
     class(params) <- 'bpwpm_params'
 
     return(params)

@@ -4,7 +4,7 @@
 \alias{calculate_F}
 \title{F matrix calculation}
 \usage{
-calculate_F(Phi, w, d, intercept)
+calculate_F(Phi, w, d)
 }
 \arguments{
 \item{Phi}{Piecewise Polinomail expansion for an input matrix X previosly
@@ -14,8 +14,6 @@ calculated by \code{\link{calculate_Phi}}}
 (N*d)}
 
 \item{d}{Number of dimentions, this parameter helps to improve efficiency}
-
-\item{intercept}{Intercept optional paramter. Logical}
 }
 \value{
 F matrix

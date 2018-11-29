@@ -9,7 +9,7 @@ accuracy(new_Y, p, verb = FALSE)
 \arguments{
 \item{p}{Vector of fitted probabilities for each Y.}
 
-\item{verb}{verbose, if True, prints aditional information (logical)}
+\item{verb}{short for verbose, if TRUE, prints aditional information (logical)}
 }
 \value{
 The accuracy of the model, given the fitted probabilities and new data

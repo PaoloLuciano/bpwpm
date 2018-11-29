@@ -9,11 +9,6 @@
 #' @param M M minus 1 is the degree of the polinomial (integer - M > 0)
 #' @param J Number of intervals in each dimention (integer - J > 1)
 #' @param K Order of continuity in the derivatives (integrer - K < M)
-#' @param intercept Intercept:= To add an itercept term to the estimation. It's
-#'   recomended to have one (logical)
-#' @param precision_beta If using the default sigmas for betas, a diagonal
-#'   matrix will be used. Precision controls its magnitude (numeric - precision
-#'   > 0)
 #' @param precision_w If using the default sigmas for w, a diagonal matrix will
 #'   be used. Precision controls its magnitude (numeric - precision > 0)
 #' @param draws Númber of samples to draw from the Gibbs Sampler (integer - draw
@@ -31,7 +26,9 @@
 #' @param sigma_w_0_inv sigma_w_0_inv:= Prior Inverse if the Variance-Covariance
 #'   Matrices of w (list - d elements, each element is a numeric matrix of size
 #'   N*N)
-#' @param verb verbose, if True, prints aditional information (logical)
+#' @param indep_terms Keeps the independent terms in the PWP expansion.
+#'   Leaving those terms might lead to identificability errors. (logical)
+#' @param verb short for verbose, if TRUE, prints aditional information (logical)
 #' @param debug If TRUE, print even more info to help with debugging (logical)
 #'
 #' @return An object of the class "bpwpm" containing at the following
@@ -47,7 +44,7 @@
 #' \item{J: }{Initial parameters}
 #' \item{K: }{Initial parameters}
 #' \item{d: }{Number of dimentions}
-#' \item{intercept: }{Logical value}
+#' \item{indep_terms: }{Logical. If independent terms are keept}
 #' \item{info}{A string that prints the basic information of the mode. Used for
 #' the summary function.}
 #' }
@@ -57,12 +54,10 @@
 #' with its corresponding analysis.
 
 bpwpm_gibbs <- function(Y, X, M, J, K,
-                intercept = TRUE, precision_beta = 1, precision_w = 1,
+                precision_w = 1,
                 draws = 10^3, tau = NULL,
-                #beta_init = NULL,
-                #mu_beta_0 = NULL,
-                #sigma_beta_0_inv = NULL,
                 w_init = NULL, mu_w_0 = NULL, sigma_w_0_inv = NULL,
+                indep_terms = FALSE,
                 verb = FALSE, debug = FALSE){
 
     # 0. Stage Setting----------------------------------------------------------
@@ -74,17 +69,21 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
     N <- M * J - K * (J - 1) # Númber of basis funcitons
 
-     # Initial parameters for beta
-    if(intercept){
-        betas <- rep(1,d+1) # Setting beta to 1
-    }else{
-        betas <- rep(1,d)
-    }
+     # Initial parameters for betas
+    betas <- rep(1,d+1)
 
     # Initial parameters for w
     if(is.null(w_init)){
         # Standard w, the weight are taken uniformly throught w
-        w <- matrix(1/N, nrow = N, ncol = d)
+        if(indep_terms == FALSE){
+            N <- N - 1
+            w <- matrix(1/N, nrow = N, ncol = d) # Removes independent parameters
+            cat("Removing independent terms, using N-1 parameters")
+        }else{
+            w <- matrix(1/N, nrow = N, ncol = d) # Removes independent parameters
+            cat("Independent terms kept, using N parameters")
+        }
+
     }else{
         w <- w_init
     }
@@ -148,10 +147,10 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
     }
 
     # 1.2 Piece Wise Polinomial expansion Phi
-    Phi <- calculate_Phi(X, M, J, K, d, tau)
+    Phi <- calculate_Phi(X, M, J, K, d, tau, indep_terms)
 
     # 1.3 Calculating initial F
-    F_mat <- calculate_F(Phi, w, d, intercept)
+    F_mat <- calculate_F(Phi, w, d)
 
     if(verb){
         cat("\tInitial F\n")
@@ -203,6 +202,7 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
             sim_beta <- rbind(sim_beta,betas) # Apending Betas
         }
 
+        # GAM first step
         betas[1] <- mean(z)
 
         if(verb){
@@ -263,7 +263,7 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
                   J = J,
                   K = K,
                   d = d,
-                  intercept = intercept,
+                  indep_terms = indep_terms,
                   info = info)
     class(model) <- 'bpwpm'
 

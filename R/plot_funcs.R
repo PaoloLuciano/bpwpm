@@ -158,8 +158,8 @@ plot_each_F <- function(Y, X, F_mat){
             K <- F_mat$K
             d <- F_mat$d
             tau <- F_mat$tau
-            Phi <- calculate_Phi(X,M,J,K,d,tau)
-            F_mat <- calculate_F(Phi, F_mat$w, d, F_mat$intercept)
+            Phi <- calculate_Phi(X,M,J,K,d,tau, indep_terms = F_mat$indep_terms)
+            F_mat <- calculate_F(Phi, F_mat$w, d)
         }
     }
 
@@ -169,18 +169,13 @@ plot_each_F <- function(Y, X, F_mat){
         Y <- as.factor(Y)
     }
 
-    # If F has an intercept term
-    if(dim(F_mat)[2] == (d + 1)){
-        F_mat <- F_mat[, -1]
-    }
-
     for(i in seq(1:d)){
-        p <- ggplot2::qplot(x = X[,i],  y = F_mat[,i],
+        p <- ggplot2::qplot(x = X[,i],  y = F_mat[,i+1],
                             color = Y) +
             xlab(paste("X_",i, sep = "")) +
             ylab(paste("F_",i,"(X_",i,")",sep = ""))
         print(p)
-        if(i != d){
+        if(i != (d+1)){
             readline(prompt="Press [enter] to view next plot")
         }
     }

@@ -4,7 +4,7 @@
 \alias{calculate_Phi}
 \title{Piece wise polinomial expansion for X (PWP)}
 \usage{
-calculate_Phi(X, M, J, K, d, tau)
+calculate_Phi(X, M, J, K, d, tau, indep_terms)
 }
 \arguments{
 \item{X}{Design matrix of n observations and d covariables (numeric - n*d)}
@@ -19,6 +19,9 @@ calculate_Phi(X, M, J, K, d, tau)
 
 \item{tau}{matrix containing the nodes in which to split the Piecewise
 Polinomials}
+
+\item{indep_terms}{Keeps the independent terms in the PWP expansion.
+Leaving those terms might lead to identificability errors. (logical)}
 }
 \value{
 A list of PWP expansion matrixes for each dimention d.
