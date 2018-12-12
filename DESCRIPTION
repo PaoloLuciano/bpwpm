@@ -1,7 +1,7 @@
 Package: bpwpm
 Type: Package
 Title: Bayesian Piecewise Polinomial Model
-Version: 0.2.0
+Version: 2.1.0
 Author: person("Gianpaolo", "Luciano", 
     email = "paolo.luciano93@gmail.com", role = c("aut", "cre"))
 Description: This package is developed to implement and test a Bayesian 

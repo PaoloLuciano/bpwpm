@@ -54,10 +54,11 @@
 #' with its corresponding analysis.
 
 bpwpm_gibbs <- function(Y, X, M, J, K,
-                precision_w = 1,
-                draws = 10^3, tau = NULL,
-                w_init = NULL, mu_w_0 = NULL, sigma_w_0_inv = NULL,
+                draws = 10^3,
                 indep_terms = FALSE,
+                tau = NULL,
+                w_init = NULL,
+                mu_w_0 = NULL, sigma_w_0_inv = NULL, precision_w = 1,
                 verb = FALSE, debug = FALSE){
 
     # 0. Stage Setting----------------------------------------------------------
@@ -168,8 +169,10 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
 
     # 2. Gibbs Sampler, z -> beta -> w -> F -> z -> ... ------------------------
 
+    # cat("New Version!")
     for(k in seq(1,draws)){
 
+        # Print number of iterations
         if(verb){cat("\nIter: ", k, sep ="")
         }else if((k %% 100) == 0){
             cat("\nIter: ", k, sep = "")
@@ -203,17 +206,18 @@ bpwpm_gibbs <- function(Y, X, M, J, K,
         }
 
         # GAM first step
-        betas[1] <- mean(z)
+        betas[1] <- mean(eta)
 
         if(verb){
             cat("\n\tBeta:\t", format(betas,digits = 2, width = 10), sep = "")
         }
 
+
         # 2.3. W - Sampling from the distribution for w
         for(j in 1:d){
 
             # Residuals for dim j
-            h <- (z - crossprod(t(F_mat[, -( j+1 )]), betas[-(j+1)]))/betas[j+1]
+            h <- (eta - crossprod(t(F_mat[, -( j+1 )]), betas[-(j+1)]))/betas[j+1]
 
             if(debug){cat("\n\tPartial Residuals:", format(head(h),digits = 2, width = 10), cat = "")}
 
